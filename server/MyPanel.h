@@ -1,15 +1,14 @@
-#ifndef MYDIALOG_H
-#define MYDIALOG_H
+#ifndef MYPANEL_H
+#define MYPANEL_H
 
 //подключение заголовочных файлов wxWidgets и приложения, используемых в этом файле (h и cpp)
-#include <wx/dialog.h>
-#include <wx/msgdlg.h>
+#include <wx/panel.h>
 
-class MyDialog : public wxDialog
+class MyPanel : public wxPanel
 {
 public:
-    MyDialog();
-    ~MyDialog();
+    MyPanel();
+    ~MyPanel();
 
 private:
 

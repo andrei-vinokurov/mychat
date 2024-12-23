@@ -1,15 +1,14 @@
-#ifndef MYDIALOG_H
-#define MYDIALOG_H
+#ifndef MYFRAME_H
+#define MYFRAME_H
 
 //подключение заголовочных файлов wxWidgets и приложения, используемых в этом файле (h и cpp)
-#include <wx/dialog.h>
-#include <wx/msgdlg.h>
+#include <wx/frame.h>
 
-class MyDialog : public wxDialog
+class MyFrame : public wxFrame
 {
 public:
-    MyDialog();
-    ~MyDialog();
+    MyFrame();
+    ~MyFrame();
 
 private:
 

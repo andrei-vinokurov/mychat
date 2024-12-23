@@ -7,11 +7,17 @@
 class MyPanel : public wxPanel
 {
 public:
-    MyPanel();
-    ~MyPanel();
+    MyPanel(wxPanel* parent);
+    wxPanel* m_parentPanel; //член данных, для получения доступа к родительской панели
 
 private:
 
+};
+
+//идентификаторы некоторых элементов приложения
+enum
+{
+    ID_Panel
 };
 
 #endif

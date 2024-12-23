@@ -1,11 +1,7 @@
 #include "MyPanel.h"
 
-MyPanel::MyPanel()
+//конструктор класса MyPanel
+MyPanel::MyPanel(wxPanel* parent) : wxPanel (parent, wxID_ANY, wxDefaultPosition, wxSize (500, 500), wxBORDER_SUNKEN)
 {
-
-}
-
-MyPanel::~MyPanel()
-{
-
+    m_parentPanel = parent; //получение доступа к родительской панели
 }
