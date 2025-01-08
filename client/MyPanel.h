@@ -17,7 +17,7 @@ private:
 //идентификаторы некоторых элементов приложения
 enum
 {
-    ID_Panel
+    ID_Panel,
 };
 
 #endif
