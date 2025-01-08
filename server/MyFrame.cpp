@@ -15,27 +15,40 @@ MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, wxT("Чат_СЕРВЕР"), wxDe
     //привязка функций к пунктам меню
     Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
+
+    //создаем область перечня доступных клиентов
+    m_listCtrl = new wxListCtrl (this, wxID_ANY, wxPoint (0,0), wxSize (500, 500), wxLC_REPORT);
+    m_listCtrl->AppendColumn (wxT("Имя"), wxLIST_FORMAT_CENTER, 200);
+    m_listCtrl->AppendColumn ("IP", wxLIST_FORMAT_CENTER, 150);
+    m_listCtrl->AppendColumn ("Port", wxLIST_FORMAT_CENTER, 150);
+}
+
+
+//выход
+void MyFrame::OnExit(wxCommandEvent& event)
+{
+    Close(true);
+}
+ 
+
+//о программе
+void MyFrame::OnAbout(wxCommandEvent& event)
+{
+    wxMessageBox(wxT("Это серверная часть программы, которая помогает обмениваться по сети текстовыми сообщениями."),
+                 wxT("О программе"), wxOK | wxICON_INFORMATION);
 }
 
 
 void MyFrame::OnServerEvent(wxSocketEvent& event)
 {
-  wxString s = "OnServerEvent: ";
-  wxSocketBase *sock;
+
+  wxSocketBase* sock;
 
   switch(event.GetSocketEvent())
   {
-    case wxSOCKET_CONNECTION : s.Append("wxSOCKET_CONNECTION\n"); break;
-    default                  : s.Append(_("Unexpected event !\n")); break;
+    case wxSOCKET_CONNECTION : wxLogMessage(wxT("Соединение с клиентом")); break; //s.Append("wxSOCKET_CONNECTION\n"); break;
+    default                  : wxLogMessage(wxT("Неопределенное поведение")); break; //s.Append(_("Unexpected event !\n")); break;
   }
-
-  //??????????????????????????????????????????????
-  //m_text->AppendText(s);
-
-  // Accept new connection if there is one in the pending
-  // connections queue, else exit. We use Accept(false) for
-  // non-blocking accept (although if we got here, there
-  // should ALWAYS be a pending connection).
 
   sock = m_server->Accept(false);
 
@@ -44,32 +57,63 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
     IPaddress addr;
     if ( !sock->GetPeer(addr) )
     {
-      wxLogMessage("New connection from unknown client accepted.");
+      wxLogMessage(wxT("Новое подключение от неизвестного клиента принято"));
       m_listCtrl->InsertItem (0, "");
     }
     else
     {
-      wxLogMessage("New client connection from %s:%u accepted",
+      wxLogMessage(wxT("Новый клиент %s:%u присоединился"),
                    addr.IPAddress(), addr.Service());
 
       m_listCtrl->InsertItem (0, "");
       m_listCtrl->SetItem (0, 0, addr.IPAddress(), -1);     
       m_listCtrl->SetItem (0, 1, wxString::Format(wxT("%d"), addr.Service()), -1);
     }
-    /*
-    m_listCtrl->SetItemData(0, m_Nclient);
-    m_map.emplace(addr.IPAddress() + " " + wxString::Format(wxT("%d"), addr.Service()), m_Nclient);
-    m_Nclient++;
-    */
+
   }
   else
   {
-    wxLogMessage("Error: couldn't accept a new connection");
+    wxLogMessage(wxT("Ошибка: не удалось принять новое соединение"));
     return;
   }
 
   sock->SetEventHandler(*this, SOCKET_ID);
   sock->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_LOST_FLAG);
   sock->Notify(true);
+
+}
+
+
+void MyFrame::OnSocketEvent(wxSocketEvent& event)
+{
+  wxSocketBase* sock = event.GetSocket();
+  IPaddress addr;
+  sock->GetPeer(addr);
+
+  switch(event.GetSocketEvent())
+  {
+    case wxSOCKET_INPUT : wxLogMessage("wxSOCKET_INPUT"); break; //s.Append("wxSOCKET_INPUT\n"); break;
+    case wxSOCKET_LOST  : wxLogMessage("wxSOCKET_LOST"); break; //s.Append("wxSOCKET_LOST\n"); break;
+    default             : wxLogMessage(wxT("Неизвестное событие")); break; //s.Append(_("Unexpected event !\n")); break;
+  }
+
+  switch(event.GetSocketEvent())
+  {
+    case wxSOCKET_INPUT:
+    {
+
+      sock->SetNotify(wxSOCKET_LOST_FLAG);
+      // 
+      sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
+      break;
+    }
+    case wxSOCKET_LOST:
+    {
+      wxLogMessage(wxT("Сокет удален"));
+      sock->Destroy();
+      break;
+    }
+    default: ;
+  }
 
 }
