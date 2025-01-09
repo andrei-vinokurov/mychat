@@ -4,6 +4,7 @@
 //подключение заголовочных файлов wxWidgets и приложения, используемых в этом файле (h и cpp)
 #include <wx/dialog.h>
 #include <wx/msgdlg.h>
+#include <wx/textdlg.h>
 
 class MyDialog : public wxDialog
 {

@@ -101,15 +101,15 @@ void MyFrame::OpenConnection(wxSockAddress::Family family)
 */
 
   // Ask user for server address
-    wxString hostname = "localhost";
-    /*
-    wxGetTextFromUser(
+    //wxString hostname("localhost");
+    
+    wxString hostname = wxGetTextFromUser(
     _("Enter the address of the wxSocket demo server:"),
     _("Connect ..."),
     "localhost");
     if ( hostname.empty() )
     return;
-    */
+    
 
     addr->Hostname(hostname);
     addr->Service(3000);

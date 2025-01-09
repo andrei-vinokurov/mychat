@@ -16,11 +16,44 @@ MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, wxT("Чат_СЕРВЕР"), wxDe
     Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
 
-    //создаем область перечня доступных клиентов
+    //создаем адрес
+    IPaddress addr;
+    addr.Service(3000);
+
+    wxLogMessage("Creating server at %s:%u", addr.IPAddress(), addr.Service());
+
+    //создаем сокет
+    m_server = new wxSocketServer(addr);
+
+    //используем IsOk() для проверки, прослушивает ли сокет
+    if (!m_server->IsOk())
+    {
+      wxLogMessage("Could not listen at the specified port !");
+      return;
+    }
+
+    IPaddress addrReal;
+    if (!m_server->GetLocal(addrReal))
+    {
+      wxLogMessage("ERROR: couldn't get the address we bound to");
+    }
+    else
+    {
+    wxLogMessage("Server listening at %s:%u",
+                 addrReal.IPAddress(), addrReal.Service());
+    }
+
+    //установки обработчика событий
+    m_server->SetEventHandler(*this, SERVER_ID);
+    m_server->SetNotify(wxSOCKET_CONNECTION_FLAG);
+    m_server->Notify(true);
+
+    //создаем область перечня подключенных клиентов
     m_listCtrl = new wxListCtrl (this, wxID_ANY, wxPoint (0,0), wxSize (500, 500), wxLC_REPORT);
     m_listCtrl->AppendColumn (wxT("Имя"), wxLIST_FORMAT_CENTER, 200);
     m_listCtrl->AppendColumn ("IP", wxLIST_FORMAT_CENTER, 150);
     m_listCtrl->AppendColumn ("Port", wxLIST_FORMAT_CENTER, 150);
+
 }
 
 
@@ -47,7 +80,7 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
   switch(event.GetSocketEvent())
   {
     case wxSOCKET_CONNECTION : wxLogMessage(wxT("Соединение с клиентом")); break; //s.Append("wxSOCKET_CONNECTION\n"); break;
-    default                  : wxLogMessage(wxT("Неопределенное поведение")); break; //s.Append(_("Unexpected event !\n")); break;
+    default                  : wxLogMessage(wxT("Неопределенное событие")); break; //s.Append(_("Unexpected event !\n")); break;
   }
 
   sock = m_server->Accept(false);
@@ -55,7 +88,7 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
   if (sock)
   {
     IPaddress addr;
-    if ( !sock->GetPeer(addr) )
+    if (!sock->GetPeer(addr))
     {
       wxLogMessage(wxT("Новое подключение от неизвестного клиента принято"));
       m_listCtrl->InsertItem (0, "");

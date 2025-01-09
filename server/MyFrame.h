@@ -38,7 +38,7 @@ private:
 //идентификаторы некоторых элементов приложения
 enum
 {
-  SERVER_ID,
+  SERVER_ID = 100,
   SOCKET_ID
 };
 
