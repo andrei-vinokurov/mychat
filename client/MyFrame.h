@@ -41,7 +41,7 @@ enum
 {
     // id сокета
     SOCKET_ID,
-    CLIENT_OPEN = 100,
+    CLIENT_OPEN,
 #if wxUSE_IPV6
     CLIENT_OPENIPV6,
 #endif

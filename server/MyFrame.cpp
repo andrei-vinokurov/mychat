@@ -16,6 +16,10 @@ MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, wxT("Чат_СЕРВЕР"), wxDe
     Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
 
+    //привязка функций к событиям сокета
+    Bind(wxEVT_SOCKET, &MyFrame::OnServerEvent, this, SERVER_ID);
+    Bind(wxEVT_SOCKET, &MyFrame::OnSocketEvent, this, SOCKET_ID);    
+
     //создаем адрес
     IPaddress addr;
     addr.Service(3000);
