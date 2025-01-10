@@ -67,12 +67,12 @@ void MyFrame::OnAbout(wxCommandEvent& event)
 }
 
 
-void MyFrame::OnOpenConnection(wxCommandEvent& WXUNUSED(event))
+void MyFrame::OnOpenConnection(wxCommandEvent& event)
 {
     OpenConnection(wxSockAddress::IPV4);
 }
 #if wxUSE_IPV6
-void MyFrame::OnOpenConnectionIPv6(wxCommandEvent& WXUNUSED(event))
+void MyFrame::OnOpenConnectionIPv6(wxCommandEvent& event)
 {
     OpenConnection(wxSockAddress::IPV6);
 }
@@ -92,20 +92,10 @@ void MyFrame::OpenConnection(wxSockAddress::Family family)
     else
 #endif
     addr = &addr4;
-/*
-    m_menuSocket->Enable(CLIENT_OPEN, false);
-#if wxUSE_IPV6
-    m_menuSocket->Enable(CLIENT_OPENIPV6, false);
-#endif
-    m_menuSocket->Enable(CLIENT_CLOSE, false);
-*/
-
-  // Ask user for server address
-    //wxString hostname("localhost");
     
     wxString hostname = wxGetTextFromUser(
-    _("Enter the address of the wxSocket demo server:"),
-    _("Connect ..."),
+    wxT("Введите адрес сервера"),
+    wxT("Соединение ..."),
     "localhost");
     if ( hostname.empty() )
     return;
@@ -119,7 +109,7 @@ void MyFrame::OpenConnection(wxSockAddress::Family family)
     m_sock->Connect(*addr, false);
 }
 
-void MyFrame::OnCloseConnection(wxCommandEvent& WXUNUSED(event))
+void MyFrame::OnCloseConnection(wxCommandEvent& event)
 {
   m_sock->Close();
 }

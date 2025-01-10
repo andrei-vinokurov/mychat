@@ -20,11 +20,19 @@ MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, wxT("Чат_СЕРВЕР"), wxDe
     Bind(wxEVT_SOCKET, &MyFrame::OnServerEvent, this, SERVER_ID);
     Bind(wxEVT_SOCKET, &MyFrame::OnSocketEvent, this, SOCKET_ID);    
 
+    //текстовая область
+    m_text  = new wxTextCtrl(this, wxID_ANY,
+                           wxT("Это серверная часть программы Чат\n"),
+                           wxPoint (0, 0), wxSize (500, 200),
+                           wxTE_MULTILINE | wxTE_READONLY);
+    delete wxLog::SetActiveTarget(new wxLogTextCtrl(m_text));
+
+
     //создаем адрес
     IPaddress addr;
     addr.Service(3000);
 
-    wxLogMessage("Creating server at %s:%u", addr.IPAddress(), addr.Service());
+    wxLogMessage(wxT("Создание сервера %s:%u"), addr.IPAddress(), addr.Service());
 
     //создаем сокет
     m_server = new wxSocketServer(addr);
@@ -32,18 +40,18 @@ MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, wxT("Чат_СЕРВЕР"), wxDe
     //используем IsOk() для проверки, прослушивает ли сокет
     if (!m_server->IsOk())
     {
-      wxLogMessage("Could not listen at the specified port !");
+      wxLogMessage(wxT("Не удалось прослушать указанный порт!"));
       return;
     }
 
     IPaddress addrReal;
     if (!m_server->GetLocal(addrReal))
     {
-      wxLogMessage("ERROR: couldn't get the address we bound to");
+      wxLogMessage(wxT("ОШИБКА: не удалось получить адрес, к которому мы привязаны"));
     }
     else
     {
-    wxLogMessage("Server listening at %s:%u",
+    wxLogMessage(wxT("Прослушивание сервера %s:%u"),
                  addrReal.IPAddress(), addrReal.Service());
     }
 
@@ -53,7 +61,7 @@ MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, wxT("Чат_СЕРВЕР"), wxDe
     m_server->Notify(true);
 
     //создаем область перечня подключенных клиентов
-    m_listCtrl = new wxListCtrl (this, wxID_ANY, wxPoint (0,0), wxSize (500, 500), wxLC_REPORT);
+    m_listCtrl = new wxListCtrl (this, wxID_ANY, wxPoint (0, 200), wxSize (500, 300), wxLC_REPORT);
     m_listCtrl->AppendColumn (wxT("Имя"), wxLIST_FORMAT_CENTER, 200);
     m_listCtrl->AppendColumn ("IP", wxLIST_FORMAT_CENTER, 150);
     m_listCtrl->AppendColumn ("Port", wxLIST_FORMAT_CENTER, 150);
@@ -103,8 +111,9 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
                    addr.IPAddress(), addr.Service());
 
       m_listCtrl->InsertItem (0, "");
-      m_listCtrl->SetItem (0, 0, addr.IPAddress(), -1);     
-      m_listCtrl->SetItem (0, 1, wxString::Format(wxT("%d"), addr.Service()), -1);
+      m_listCtrl->SetItem (0, 0, "");  
+      m_listCtrl->SetItem (0, 1, addr.IPAddress(), -1);     
+      m_listCtrl->SetItem (0, 2, wxString::Format(wxT("%d"), addr.Service()), -1);
     }
 
   }
@@ -146,7 +155,7 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
     }
     case wxSOCKET_LOST:
     {
-      wxLogMessage(wxT("Сокет удален"));
+      wxLogMessage(wxT("Клиент отключился"));
       sock->Destroy();
       break;
     }

@@ -25,6 +25,7 @@ public:
 
 private:
     wxSocketServer* m_server;
+    wxTextCtrl* m_text;
     wxListCtrl* m_listCtrl;
 
     void OnExit(wxCommandEvent& event); //выход
