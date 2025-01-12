@@ -109,6 +109,43 @@ void MyFrame::OpenConnection(wxSockAddress::Family family)
     m_sock->Connect(*addr, false);
 }
 
+void MyFrame::OnSocketEvent(wxSocketEvent& event)
+{
+
+
+    switch ( event.GetSocketEvent() )
+    {
+        case wxSOCKET_INPUT:
+        {
+            wxLogMessage("Input available on the socket");
+            unsigned char len;
+            m_sock->Read(&len, 1);
+            const char* buf[len];
+            m_sock->Read(buf, len);
+            //m_clients.clear();
+            memcpy(&m_clients, buf, len);
+            UpdateList();
+            wxLogMessage("c++");
+            
+            break;
+        }
+        case wxSOCKET_LOST:
+            wxLogMessage("Socket connection was unexpectedly lost.");
+
+            break;
+
+        case wxSOCKET_CONNECTION:
+            wxLogMessage("... socket is now connected.");
+
+            break;
+
+        default:
+            wxLogMessage("Unknown socket event!!!");
+            break;
+    }
+
+}
+
 void MyFrame::OnCloseConnection(wxCommandEvent& event)
 {
   m_sock->Close();

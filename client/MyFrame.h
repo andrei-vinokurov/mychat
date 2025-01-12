@@ -37,6 +37,8 @@ private:
 
     void OpenConnection(wxSockAddress::Family family);
 
+    void OnSocketEvent(wxSocketEvent& event);
+
     void UpdateList();
 
 };

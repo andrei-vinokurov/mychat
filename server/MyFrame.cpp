@@ -111,6 +111,9 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
 
       client newClient ("", addr.IPAddress(), wxString::Format(wxT("%d"), addr.Service()));
       m_clients.insert(newClient);
+
+      m_sockets.insert(sock);
+      
       UpdateList();
 /*
       m_listCtrl->InsertItem (0, "");
@@ -127,6 +130,7 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
     return;
   }
 
+  
   sock->SetEventHandler(*this, SOCKET_ID);
   sock->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_LOST_FLAG);
   sock->Notify(true);
@@ -169,6 +173,9 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
       }
 
       UpdateList();
+
+      m_sockets.erase(sock);
+
       wxLogMessage(wxT("Клиент отключился"));
       sock->Destroy();
       break;
@@ -188,6 +195,7 @@ void MyFrame::UpdateList()
     m_listCtrl->SetItem (0, 1, c.GetAddress(), -1);     
     m_listCtrl->SetItem (0, 2, c.GetPort(), -1);
   }
+  SendList();
 }
 
 void MyFrame::SendList()
@@ -196,13 +204,10 @@ void MyFrame::SendList()
   const char* buf[len];
   memcpy(buf, &m_clients, len);
 
-  for(client c : m_clients)
+  for(auto c : m_sockets)
   {
-
+     c->Write(&len, 1);
+     c->Write(buf, len);
   }
-
-
-  //char buf[len] = &m_clients;
-  //char buf[] = (char*) &client;
 
 }

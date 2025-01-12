@@ -30,6 +30,7 @@ private:
     wxTextCtrl* m_text;
     wxListCtrl* m_listCtrl;
     std::set <client> m_clients;
+    std::set <wxSocketBase*> m_sockets;
 
 
     void OnExit(wxCommandEvent& event); //выход
