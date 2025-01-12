@@ -103,17 +103,21 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
     if (!sock->GetPeer(addr))
     {
       wxLogMessage(wxT("Новое подключение от неизвестного клиента принято"));
-      m_listCtrl->InsertItem (0, "");
     }
     else
     {
       wxLogMessage(wxT("Новый клиент %s:%u присоединился"),
                    addr.IPAddress(), addr.Service());
 
+      client newClient ("", addr.IPAddress(), wxString::Format(wxT("%d"), addr.Service()));
+      m_clients.insert(newClient);
+      UpdateList();
+/*
       m_listCtrl->InsertItem (0, "");
       m_listCtrl->SetItem (0, 0, "");  
       m_listCtrl->SetItem (0, 1, addr.IPAddress(), -1);     
       m_listCtrl->SetItem (0, 2, wxString::Format(wxT("%d"), addr.Service()), -1);
+*/
     }
 
   }
@@ -155,11 +159,50 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
     }
     case wxSOCKET_LOST:
     {
+      for(client c : m_clients)
+      {
+        if(c.GetAddress() == addr.IPAddress()) 
+        {
+          m_clients.erase(c);
+          break;
+        }
+      }
+
+      UpdateList();
       wxLogMessage(wxT("Клиент отключился"));
       sock->Destroy();
       break;
     }
     default: ;
   }
+
+}
+
+void MyFrame::UpdateList()
+{
+  m_listCtrl->DeleteAllItems();
+  for(client c : m_clients)
+  {
+    m_listCtrl->InsertItem (0, "");
+    m_listCtrl->SetItem (0, 0, c.GetName());  
+    m_listCtrl->SetItem (0, 1, c.GetAddress(), -1);     
+    m_listCtrl->SetItem (0, 2, c.GetPort(), -1);
+  }
+}
+
+void MyFrame::SendList()
+{
+  unsigned char len = sizeof(m_clients);
+  const char* buf[len];
+  memcpy(buf, &m_clients, len);
+
+  for(client c : m_clients)
+  {
+
+  }
+
+
+  //char buf[len] = &m_clients;
+  //char buf[] = (char*) &client;
 
 }

@@ -113,3 +113,15 @@ void MyFrame::OnCloseConnection(wxCommandEvent& event)
 {
   m_sock->Close();
 }
+
+void MyFrame::UpdateList()
+{
+  m_listCtrl->DeleteAllItems();
+  for(client c : m_clients)
+  {
+    m_listCtrl->InsertItem (0, "");
+    m_listCtrl->SetItem (0, 0, c.GetName());  
+    m_listCtrl->SetItem (0, 1, c.GetAddress(), -1);     
+    m_listCtrl->SetItem (0, 2, c.GetPort(), -1);
+  }
+}

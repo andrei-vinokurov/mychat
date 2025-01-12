@@ -8,6 +8,8 @@
 #include <wx/listctrl.h>
 #include <wx/log.h>
 #include <wx/msgdlg.h>
+#include <set>
+#include "client.h"
 
 // В настоящее время этот пример написан для использования сокетов только IP или только IPv6
 // В будущем его следует расширить, чтобы разрешить использование любого из них
@@ -27,12 +29,18 @@ private:
     wxSocketServer* m_server;
     wxTextCtrl* m_text;
     wxListCtrl* m_listCtrl;
+    std::set <client> m_clients;
+
 
     void OnExit(wxCommandEvent& event); //выход
     void OnAbout(wxCommandEvent& event); //о программе
 
     void OnServerEvent(wxSocketEvent& event);
     void OnSocketEvent(wxSocketEvent& event);
+
+    void UpdateList();
+
+    void SendList();
 
 };
 

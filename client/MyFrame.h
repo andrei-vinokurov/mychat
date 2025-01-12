@@ -9,6 +9,8 @@
 #include <wx/log.h>
 //#include "MyPanel.h"
 #include "MyDialog.h"
+#include <set>
+#include "client.h"
 
 
 class MyFrame : public wxFrame
@@ -21,6 +23,7 @@ public:
 private:
     wxSocketClient* m_sock;
     wxListCtrl* m_listCtrl;
+    std::set <client> m_clients;
 
     void OnExit(wxCommandEvent& event); //выход
     void OnAbout(wxCommandEvent& event); //о программе
@@ -33,6 +36,8 @@ private:
 #endif
 
     void OpenConnection(wxSockAddress::Family family);
+
+    void UpdateList();
 
 };
 
