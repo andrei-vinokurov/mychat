@@ -30,6 +30,7 @@ MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, wxT("Чат"), wxDefaultPosition
     Bind(wxEVT_MENU, &MyFrame::OnOpenConnectionIPv6, this, CLIENT_OPENIPV6);
 #endif
     Bind(wxEVT_MENU, &MyFrame::OnCloseConnection, this, CLIENT_CLOSE);
+    Bind(wxEVT_SOCKET, &MyFrame::OnSocketEvent, this, SOCKET_ID);
     
 
     //создаем сокет
@@ -122,10 +123,14 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
             m_sock->Read(&len, 1);
             const char* buf[len];
             m_sock->Read(buf, len);
-            //m_clients.clear();
-            memcpy(&m_clients, buf, len);
-            UpdateList();
-            wxLogMessage("c++");
+            m_clients.clear();
+            //memcpy(&m_clients, buf, len);
+            //int n1 = sizeof(m_clients);
+            //int n2 = m_clients.size();
+            //UpdateList();
+            //wxLogMessage("n1 = %d", n1);
+            //wxLogMessage("n2 = %d", n2);
+         
             
             break;
         }

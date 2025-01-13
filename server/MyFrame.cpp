@@ -114,7 +114,10 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
 
       m_sockets.insert(sock);
       
-      UpdateList();
+      
+
+      
+
 /*
       m_listCtrl->InsertItem (0, "");
       m_listCtrl->SetItem (0, 0, "");  
@@ -134,6 +137,8 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
   sock->SetEventHandler(*this, SOCKET_ID);
   sock->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_LOST_FLAG);
   sock->Notify(true);
+
+  UpdateList();
 
 }
 
