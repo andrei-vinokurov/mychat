@@ -119,17 +119,34 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
         case wxSOCKET_INPUT:
         {
             wxLogMessage("Input available on the socket");
+            /*
             unsigned char len;
             m_sock->Read(&len, 1);
             const char* buf[len];
             m_sock->Read(buf, len);
             m_clients.clear();
+            */
             //memcpy(&m_clients, buf, len);
             //int n1 = sizeof(m_clients);
             //int n2 = m_clients.size();
             //UpdateList();
             //wxLogMessage("n1 = %d", n1);
             //wxLogMessage("n2 = %d", n2);
+            unsigned char len1;
+            m_sock->Read(&len1, 1);
+            char c1[len1];
+            unsigned char len2;
+            m_sock->Read(&len2, 1); 
+            char c2[len2];
+            unsigned char len3;
+            m_sock->Read(&len3, 1);
+            char c3[len3];
+            wxString wS1(c1);
+            wxString wS2(c2); 
+            wxString wS3(c3);  
+            client newClient(wS1, wS2, wS3);
+            m_clients.insert(newClient);
+            UpdateList();
          
             
             break;

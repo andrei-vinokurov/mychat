@@ -113,6 +113,28 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
       m_clients.insert(newClient);
 
       m_sockets.insert(sock);
+
+      sock->SetEventHandler(*this, SOCKET_ID);
+      sock->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_LOST_FLAG);
+      sock->Notify(true);
+
+      const char* c1 = newClient.GetName().utf8_str();
+      unsigned char len1 = sizeof(c1) + 1;
+      const char* c2 = newClient.GetAddress().utf8_str();
+      unsigned char len2 = sizeof(c2) + 1;
+      const char* c3 = newClient.GetPort().utf8_str();
+      unsigned char len3 = sizeof(c3) + 1;
+      for(auto i : m_sockets)
+      {
+        i->Write(&len1, 1);
+        i->Write(c1, len1);
+        i->Write(&len2, 1);
+        i->Write(c2, len2);
+        i->Write(&len3, 1);
+        i->Write(c3, len3);
+      }
+
+      UpdateList();
       
       
 
@@ -134,11 +156,7 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
   }
 
   
-  sock->SetEventHandler(*this, SOCKET_ID);
-  sock->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_LOST_FLAG);
-  sock->Notify(true);
-
-  UpdateList();
+  
 
 }
 
@@ -200,7 +218,7 @@ void MyFrame::UpdateList()
     m_listCtrl->SetItem (0, 1, c.GetAddress(), -1);     
     m_listCtrl->SetItem (0, 2, c.GetPort(), -1);
   }
-  SendList();
+  //SendList();
 }
 
 void MyFrame::SendList()
