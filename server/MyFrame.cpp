@@ -243,11 +243,12 @@ void MyFrame::SendList()
       for(client j : m_clients)
       {
         const char* c1 = j.GetName().utf8_str();
-        unsigned char len1 = sizeof(c1);
+        //if(c1 == "") c1 = "noname";
+        unsigned char len1 = sizeof(c1) + 1;
         const char* c2 = j.GetAddress().utf8_str();
-        unsigned char len2 = sizeof(c2);
+        unsigned char len2 = sizeof(c2) + 1;
         const char* c3 = j.GetPort().utf8_str();
-        unsigned char len3 = sizeof(c3);
+        unsigned char len3 = sizeof(c3) + 1;
         i->Write(&len1, 1);
         i->Write(c1, len1);
         i->Write(&len2, 1);
