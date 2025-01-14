@@ -41,6 +41,8 @@ private:
 
     void UpdateList();
 
+    void RecList();
+
 };
 
 //идентификаторы некоторых элементов приложения

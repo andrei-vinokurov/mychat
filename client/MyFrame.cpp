@@ -132,20 +132,27 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
             //UpdateList();
             //wxLogMessage("n1 = %d", n1);
             //wxLogMessage("n2 = %d", n2);
+
+            /*
             unsigned char len1;
             m_sock->Read(&len1, 1);
             char c1[len1];
+            m_sock->Read(c1, len1);
             unsigned char len2;
             m_sock->Read(&len2, 1); 
             char c2[len2];
+            m_sock->Read(c2, len2);
             unsigned char len3;
             m_sock->Read(&len3, 1);
             char c3[len3];
+            m_sock->Read(c3, len3);
             wxString wS1(c1);
             wxString wS2(c2); 
             wxString wS3(c3);  
             client newClient(wS1, wS2, wS3);
             m_clients.insert(newClient);
+            */
+            
             UpdateList();
          
             
@@ -175,6 +182,7 @@ void MyFrame::OnCloseConnection(wxCommandEvent& event)
 
 void MyFrame::UpdateList()
 {
+  RecList();                                  
   m_listCtrl->DeleteAllItems();
   for(client c : m_clients)
   {
@@ -183,4 +191,31 @@ void MyFrame::UpdateList()
     m_listCtrl->SetItem (0, 1, c.GetAddress(), -1);     
     m_listCtrl->SetItem (0, 2, c.GetPort(), -1);
   }
+}
+
+void MyFrame::RecList()
+{
+    m_clients.clear();
+    unsigned char len;
+    m_sock->Read(&len, 1);
+    for(unsigned char i = 0; i < len; ++i)
+    {
+        unsigned char len1;
+        m_sock->Read(&len1, 1);
+        char c1[len1];
+        m_sock->Read(c1, len1);
+        unsigned char len2;
+        m_sock->Read(&len2, 1); 
+        char c2[len2];
+        m_sock->Read(c2, len2);
+        unsigned char len3;
+        m_sock->Read(&len3, 1);
+        char c3[len3];
+        m_sock->Read(c3, len3);
+        wxString wS1(c1);
+        wxString wS2(c2); 
+        wxString wS3(c3);  
+        client newClient(wS1, wS2, wS3);
+        m_clients.insert(newClient);
+    }
 }

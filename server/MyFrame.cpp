@@ -117,13 +117,13 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
       sock->SetEventHandler(*this, SOCKET_ID);
       sock->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_LOST_FLAG);
       sock->Notify(true);
-
+/*
       const char* c1 = newClient.GetName().utf8_str();
-      unsigned char len1 = sizeof(c1) + 1;
+      unsigned char len1 = sizeof(c1);
       const char* c2 = newClient.GetAddress().utf8_str();
-      unsigned char len2 = sizeof(c2) + 1;
+      unsigned char len2 = sizeof(c2);
       const char* c3 = newClient.GetPort().utf8_str();
-      unsigned char len3 = sizeof(c3) + 1;
+      unsigned char len3 = sizeof(c3);
       for(auto i : m_sockets)
       {
         i->Write(&len1, 1);
@@ -133,11 +133,11 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
         i->Write(&len3, 1);
         i->Write(c3, len3);
       }
-
+*/
+      
+      
       UpdateList();
       
-      
-
       
 
 /*
@@ -188,16 +188,17 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
     {
       for(client c : m_clients)
       {
-        if(c.GetAddress() == addr.IPAddress()) 
+        if(c.GetAddress() == addr.IPAddress() && 
+           c.GetPort() == wxString::Format(wxT("%d"), addr.Service())) 
         {
           m_clients.erase(c);
           break;
         }
       }
 
-      UpdateList();
-
       m_sockets.erase(sock);
+      
+      UpdateList();
 
       wxLogMessage(wxT("Клиент отключился"));
       sock->Destroy();
@@ -218,11 +219,12 @@ void MyFrame::UpdateList()
     m_listCtrl->SetItem (0, 1, c.GetAddress(), -1);     
     m_listCtrl->SetItem (0, 2, c.GetPort(), -1);
   }
-  //SendList();
+  SendList();
 }
 
 void MyFrame::SendList()
 {
+  /*
   unsigned char len = sizeof(m_clients);
   const char* buf[len];
   memcpy(buf, &m_clients, len);
@@ -232,5 +234,27 @@ void MyFrame::SendList()
      c->Write(&len, 1);
      c->Write(buf, len);
   }
+  */
+    unsigned char len = m_clients.size();
+    
+    for(auto i : m_sockets)
+    {
+      i->Write(&len, 1);
+      for(client j : m_clients)
+      {
+        const char* c1 = j.GetName().utf8_str();
+        unsigned char len1 = sizeof(c1);
+        const char* c2 = j.GetAddress().utf8_str();
+        unsigned char len2 = sizeof(c2);
+        const char* c3 = j.GetPort().utf8_str();
+        unsigned char len3 = sizeof(c3);
+        i->Write(&len1, 1);
+        i->Write(c1, len1);
+        i->Write(&len2, 1);
+        i->Write(c2, len2);
+        i->Write(&len3, 1);
+        i->Write(c3, len3);
+      }
+    }
 
 }
