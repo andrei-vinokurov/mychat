@@ -105,7 +105,7 @@ void MyFrame::OpenConnection(wxSockAddress::Family family)
     addr->Hostname(hostname);
     addr->Service(3000);
 
-    wxLogMessage("Trying to connect to %s:%d", hostname, addr->Service());
+//    wxLogMessage("Trying to connect to %s:%d", hostname, addr->Service());
 
     m_sock->Connect(*addr, false);
 }
@@ -118,7 +118,7 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
     {
         case wxSOCKET_INPUT:
         {
-            wxLogMessage("Input available on the socket");
+//            wxLogMessage("Input available on the socket");
             /*
             unsigned char len;
             m_sock->Read(&len, 1);
@@ -164,7 +164,7 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
             break;
 
         case wxSOCKET_CONNECTION:
-            wxLogMessage("... socket is now connected.");
+//          wxLogMessage("... socket is now connected.");
 
             break;
 

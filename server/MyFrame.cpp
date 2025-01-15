@@ -109,7 +109,7 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
       wxLogMessage(wxT("Новый клиент %s:%u присоединился"),
                    addr.IPAddress(), addr.Service());
 
-      client newClient ("", addr.IPAddress(), wxString::Format(wxT("%d"), addr.Service()));
+      client newClient ("noname", addr.IPAddress(), wxString::Format(wxT("%d"), addr.Service()));
       m_clients.insert(newClient);
 
       m_sockets.insert(sock);
