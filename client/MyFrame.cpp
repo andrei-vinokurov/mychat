@@ -195,6 +195,7 @@ void MyFrame::UpdateList()
 
 void MyFrame::RecList()
 {
+//    m_sock->SetNotify(wxSOCKET_LOST_FLAG);
     m_clients.clear();
     unsigned char len;
     m_sock->Read(&len, 1);
@@ -215,7 +216,11 @@ void MyFrame::RecList()
         wxString wS1(c1);
         wxString wS2(c2); 
         wxString wS3(c3);  
-        client newClient(wS1, wS2, wS3);
-        m_clients.insert(newClient);
+//        client newClient(wS1, wS2, wS3);
+//        m_clients.insert(newClient);
+        m_clients.emplace(wS1, wS2, wS3);
+//        m_sock->SetNotify(wxSOCKET_CONNECTION_FLAG |
+//                    wxSOCKET_INPUT_FLAG |
+//                    wxSOCKET_LOST_FLAG);
     }
 }

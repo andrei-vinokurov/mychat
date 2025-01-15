@@ -239,22 +239,24 @@ void MyFrame::SendList()
     
     for(auto i : m_sockets)
     {
+//      i->SetFlags(wxSOCKET_WAITALL);
       i->Write(&len, 1);
       for(client j : m_clients)
       {
         const char* c1 = j.GetName().utf8_str();
         //if(c1 == "") c1 = "noname";
-        unsigned char len1 = sizeof(c1) + 1;
+        unsigned char len1 = sizeof(c1);
         const char* c2 = j.GetAddress().utf8_str();
-        unsigned char len2 = sizeof(c2) + 1;
+        unsigned char len2 = sizeof(c2);
         const char* c3 = j.GetPort().utf8_str();
-        unsigned char len3 = sizeof(c3) + 1;
+        unsigned char len3 = sizeof(c3);
         i->Write(&len1, 1);
         i->Write(c1, len1);
         i->Write(&len2, 1);
         i->Write(c2, len2);
         i->Write(&len3, 1);
         i->Write(c3, len3);
+//        i->Discard();
       }
     }
 
