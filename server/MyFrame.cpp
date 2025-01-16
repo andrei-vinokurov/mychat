@@ -109,7 +109,7 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
       wxLogMessage(wxT("Новый клиент %s:%u присоединился"),
                    addr.IPAddress(), addr.Service());
 
-      client newClient ("noname", addr.IPAddress(), wxString::Format(wxT("%d"), addr.Service()));
+      client newClient (wxString::FromUTF8("noname"), addr.IPAddress(), wxString::Format(wxT("%d"), addr.Service()));
       m_clients.insert(newClient);
 
       m_sockets.insert(sock);
@@ -246,17 +246,26 @@ void MyFrame::SendList()
         const char* c1 = j.GetName().utf8_str();
         //if(c1 == "") c1 = "noname";
         unsigned char len1 = sizeof(c1);
+        //unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
         const char* c2 = j.GetAddress().utf8_str();
         unsigned char len2 = sizeof(c2);
+        //unsigned char len2 = (unsigned char)(wxStrlen(c2) + 1);
         const char* c3 = j.GetPort().utf8_str();
         unsigned char len3 = sizeof(c3);
+        //unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);
         i->Write(&len1, 1);
         i->Write(c1, len1);
         i->Write(&len2, 1);
         i->Write(c2, len2);
         i->Write(&len3, 1);
         i->Write(c3, len3);
-//        i->Discard();
+
+        wxString wS1(c1);
+        wxString wS2(c2); 
+        wxString wS3(c3);
+
+        wxLogMessage("server %s | %s | %s", wS1, wS2, wS3);
+      
       }
     }
 
