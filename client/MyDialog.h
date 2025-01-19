@@ -13,6 +13,7 @@ public:
     ~MyDialog();
 
 private:
+    wxTextCtrl* m_text;
 
 };
 

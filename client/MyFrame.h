@@ -7,8 +7,9 @@
 #include <wx/socket.h>
 #include <wx/listctrl.h>
 #include <wx/log.h>
-//#include "MyPanel.h"
+#include "MyPanel.h"
 #include "MyDialog.h"
+#include <memory>
 #include <set>
 #include "client.h"
 
@@ -17,7 +18,7 @@ class MyFrame : public wxFrame
 {
 public:
     MyFrame();
-    //MyPanel* m_myPanel; //окно класса MyPanel, где расположены основные объекты
+    MyPanel* m_myPanel; //окно класса MyPanel, где расположены основные объекты
 
 
 private:
@@ -43,6 +44,8 @@ private:
 
     void RecList();
 
+    void OpenDialog(wxListEvent& event);
+
 };
 
 //идентификаторы некоторых элементов приложения
@@ -54,7 +57,8 @@ enum
 #if wxUSE_IPV6
     CLIENT_OPENIPV6,
 #endif
-    CLIENT_CLOSE
+    CLIENT_CLOSE,
+    LIST_ID
 };
 
 #endif

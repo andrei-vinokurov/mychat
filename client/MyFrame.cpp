@@ -18,11 +18,19 @@ MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, wxT("Чат"), wxDefaultPosition
     menuBar->Append(menuFile, wxT("Файл")); //добавление пункта в панель Меню
     menuBar->Append(menuHelp, wxT("Помощь")); //добавление пункта в панель Меню
     SetMenuBar( menuBar ); //установка панели Меню в окно
-    //wxPanel* panel = new wxPanel(this, ID_Panel, wxPoint (0,0), wxSize (0,0));
-    //m_myPanel = new MyPanel(panel);
+    wxPanel* panel = new wxPanel(this, wxID_ANY, wxPoint (0,0), wxSize (0,0));
+    m_myPanel = new MyPanel(panel);
     CreateStatusBar(); //информационная панель
     SetStatusText(wxT("Добро пожаловать в Чат!")); //сообщение в информационной панели
     //привязка функций к пунктам меню
+
+    //создаем область перечня доступных клиентов
+    m_listCtrl = new wxListCtrl (this, LIST_ID, wxPoint (0,0), wxSize (500, 500), wxLC_REPORT);
+    m_listCtrl->AppendColumn (wxT("Имя"), wxLIST_FORMAT_CENTER, 200);
+    m_listCtrl->AppendColumn ("IP", wxLIST_FORMAT_CENTER, 150);
+    m_listCtrl->AppendColumn ("Port", wxLIST_FORMAT_CENTER, 150);
+
+    //привязка функций и событий
     Bind(wxEVT_MENU, &MyFrame::OnAbout, this, wxID_ABOUT);
     Bind(wxEVT_MENU, &MyFrame::OnExit, this, wxID_EXIT);
     Bind(wxEVT_MENU, &MyFrame::OnOpenConnection, this, CLIENT_OPEN);
@@ -31,6 +39,7 @@ MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, wxT("Чат"), wxDefaultPosition
 #endif
     Bind(wxEVT_MENU, &MyFrame::OnCloseConnection, this, CLIENT_CLOSE);
     Bind(wxEVT_SOCKET, &MyFrame::OnSocketEvent, this, SOCKET_ID);
+    Bind(wxEVT_LIST_ITEM_ACTIVATED, &MyFrame::OpenDialog, this, LIST_ID);
     
 
     //создаем сокет
@@ -42,13 +51,6 @@ MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, wxT("Чат"), wxDefaultPosition
                     wxSOCKET_INPUT_FLAG |
                     wxSOCKET_LOST_FLAG);
     m_sock->Notify(true);
-
-    //создаем область перечня доступных клиентов
-    m_listCtrl = new wxListCtrl (this, wxID_ANY, wxPoint (0,0), wxSize (500, 500), wxLC_REPORT);
-    m_listCtrl->AppendColumn (wxT("Имя"), wxLIST_FORMAT_CENTER, 200);
-    m_listCtrl->AppendColumn ("IP", wxLIST_FORMAT_CENTER, 150);
-    m_listCtrl->AppendColumn ("Port", wxLIST_FORMAT_CENTER, 150);
-
 
 }
 
@@ -113,53 +115,21 @@ void MyFrame::OpenConnection(wxSockAddress::Family family)
 void MyFrame::OnSocketEvent(wxSocketEvent& event)
 {
 
-
     switch ( event.GetSocketEvent() )
     {
         case wxSOCKET_INPUT:
         {
 //            wxLogMessage("Input available on the socket");
-            /*
-            unsigned char len;
-            m_sock->Read(&len, 1);
-            const char* buf[len];
-            m_sock->Read(buf, len);
-            m_clients.clear();
-            */
-            //memcpy(&m_clients, buf, len);
-            //int n1 = sizeof(m_clients);
-            //int n2 = m_clients.size();
-            //UpdateList();
-            //wxLogMessage("n1 = %d", n1);
-            //wxLogMessage("n2 = %d", n2);
-
-            /*
-            unsigned char len1;
-            m_sock->Read(&len1, 1);
-            char c1[len1];
-            m_sock->Read(c1, len1);
-            unsigned char len2;
-            m_sock->Read(&len2, 1); 
-            char c2[len2];
-            m_sock->Read(c2, len2);
-            unsigned char len3;
-            m_sock->Read(&len3, 1);
-            char c3[len3];
-            m_sock->Read(c3, len3);
-            wxString wS1(c1);
-            wxString wS2(c2); 
-            wxString wS3(c3);  
-            client newClient(wS1, wS2, wS3);
-            m_clients.insert(newClient);
-            */
             
             UpdateList();
-         
-            
+
             break;
         }
         case wxSOCKET_LOST:
             wxLogMessage("Socket connection was unexpectedly lost.");
+
+            m_listCtrl->DeleteAllItems();
+            m_clients.clear();
 
             break;
 
@@ -178,6 +148,8 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
 void MyFrame::OnCloseConnection(wxCommandEvent& event)
 {
   m_sock->Close();
+  m_listCtrl->DeleteAllItems();
+  m_clients.clear();
 }
 
 void MyFrame::UpdateList()
@@ -195,40 +167,38 @@ void MyFrame::UpdateList()
 
 void MyFrame::RecList()
 {
-//    m_sock->SetNotify(wxSOCKET_LOST_FLAG);
     m_clients.clear();
     unsigned char len;
     m_sock->Read(&len, 1);
     for(unsigned char i = 0; i < len; ++i)
     {
-//        m_sock->SetNotify(wxSOCKET_LOST_FLAG);
         unsigned char len1;
         m_sock->Read(&len1, 1);
         char c1[len1];
         m_sock->Read(c1, len1);
+        wxString wS1(c1);
+
         unsigned char len2;
         m_sock->Read(&len2, 1); 
         char c2[len2];
         m_sock->Read(c2, len2);
+        wxString wS2(c2);
+        
         unsigned char len3;
         m_sock->Read(&len3, 1);
         char c3[len3];
-        m_sock->Read(c3, len3);
-        wxString wS1(c1);
-        wxString wS2(c2); 
-        wxString wS3(c3);  
+        m_sock->Read(c3, len3);       
+        wxString wS3(c3);
+
         client newClient(wS1, wS2, wS3);
         m_clients.insert(newClient);
 
-        wxLogMessage("%s | %s | %s", wS1, wS2, wS3);
-        //m_clients.emplace(wS1, wS2, wS3);
-
-//         m_sock->SetNotify(wxSOCKET_CONNECTION_FLAG |
-//                    wxSOCKET_INPUT_FLAG |
-//                    wxSOCKET_LOST_FLAG);
-
     }
-//        m_sock->SetNotify(wxSOCKET_CONNECTION_FLAG |
-//                    wxSOCKET_INPUT_FLAG |
-//                    wxSOCKET_LOST_FLAG);
+}
+
+void MyFrame::OpenDialog(wxListEvent& event)
+{
+    std::unique_ptr<MyDialog> myDial = std::make_unique<MyDialog>();
+    //myDial->SetParent(m_myPanel);
+
 }
