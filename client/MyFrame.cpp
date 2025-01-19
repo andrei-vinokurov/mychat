@@ -18,8 +18,9 @@ MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, wxT("Чат"), wxDefaultPosition
     menuBar->Append(menuFile, wxT("Файл")); //добавление пункта в панель Меню
     menuBar->Append(menuHelp, wxT("Помощь")); //добавление пункта в панель Меню
     SetMenuBar( menuBar ); //установка панели Меню в окно
-    wxPanel* panel = new wxPanel(this, wxID_ANY, wxPoint (0,0), wxSize (0,0));
-    m_myPanel = new MyPanel(panel);
+    m_Panel = new wxPanel();
+    //wxPanel* panel = new wxPanel(this, wxID_ANY, wxPoint (0,0), wxSize (0,0));
+    //m_myPanel = new MyPanel(panel);
     CreateStatusBar(); //информационная панель
     SetStatusText(wxT("Добро пожаловать в Чат!")); //сообщение в информационной панели
     //привязка функций к пунктам меню
@@ -199,6 +200,8 @@ void MyFrame::RecList()
 void MyFrame::OpenDialog(wxListEvent& event)
 {
     std::unique_ptr<MyDialog> myDial = std::make_unique<MyDialog>();
+    wxPanel* panel(this);
+    myDial->Create(panel, wxID_ANY, wxT("Диалог"), wxDefaultPosition, wxSize(500, 600));
     //myDial->SetParent(m_myPanel);
 
 }

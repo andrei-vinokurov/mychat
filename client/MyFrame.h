@@ -7,7 +7,7 @@
 #include <wx/socket.h>
 #include <wx/listctrl.h>
 #include <wx/log.h>
-#include "MyPanel.h"
+//#include "MyPanel.h"
 #include "MyDialog.h"
 #include <memory>
 #include <set>
@@ -18,13 +18,14 @@ class MyFrame : public wxFrame
 {
 public:
     MyFrame();
-    MyPanel* m_myPanel; //окно класса MyPanel, где расположены основные объекты
-
-
+    //MyPanel* m_myPanel; //окно класса MyPanel, где расположены основные объекты
+    
 private:
     wxSocketClient* m_sock;
     wxListCtrl* m_listCtrl;
     std::set <client> m_clients;
+    wxPanel* m_Panel;
+
 
     void OnExit(wxCommandEvent& event); //выход
     void OnAbout(wxCommandEvent& event); //о программе
