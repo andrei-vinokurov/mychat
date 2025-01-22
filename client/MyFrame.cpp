@@ -200,8 +200,8 @@ void MyFrame::RecList()
 void MyFrame::OpenDialog(wxListEvent& event)
 {
     std::unique_ptr<MyDialog> myDial = std::make_unique<MyDialog>();
-    wxPanel* panel(this);
-    myDial->Create(panel, wxID_ANY, wxT("Диалог"), wxDefaultPosition, wxSize(500, 600));
+    //wxPanel* panel(this);
+    //myDial->Create(panel, wxID_ANY, wxT("Диалог"), wxDefaultPosition, wxSize(500, 600));
     //myDial->SetParent(m_myPanel);
 
 }

@@ -208,24 +208,29 @@ void MyFrame::SendList()
         i->Write(&len1, 1);
         i->Write(c1, len1);
         //wxString wS1(c1);
+        wxMicroSleep(1000);
 
         const char* c2 = j.GetAddress().utf8_str();
         unsigned char len2 = (unsigned char)(wxStrlen(c2) + 1);
         i->Write(&len2, 1);
         i->Write(c2, len2);
-        //wxString wS2(c2); 
+        //wxString wS2(c2);
+        wxMicroSleep(1000); 
 
         const char* c3 = j.GetPort().utf8_str();
         unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);
         i->Write(&len3, 1);
         i->Write(c3, len3);
         //wxString wS3(c3);
+        wxMicroSleep(1000);
+
 
         //wxLogMessage("|| %s | %s | %s", wS1, wS2, wS3);
-        wxLogMessage("");
-
+        //wxLogMessage("");
+        //wxMicroSleep(100000);
 
       }
+      //wxMicroSleep(100000);
 
     }
 
