@@ -9,7 +9,7 @@
 class MyDialog : public wxDialog
 {
 public:
-    MyDialog();
+    MyDialog(wxPanel* parent);
     ~MyDialog();
 
 private:

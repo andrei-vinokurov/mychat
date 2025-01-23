@@ -97,7 +97,7 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
 
   sock = m_server->Accept(false);
 
-  if (sock)
+  if (sock /*&& m_sockets.find(sock) == m_sockets.end()*/)
   {
     IPaddress addr;
     if (!sock->GetPeer(addr))
@@ -215,7 +215,7 @@ void MyFrame::SendList()
         i->Write(&len2, 1);
         i->Write(c2, len2);
         //wxString wS2(c2);
-        wxMicroSleep(1000); 
+        wxMicroSleep(1000);
 
         const char* c3 = j.GetPort().utf8_str();
         unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);
@@ -224,14 +224,9 @@ void MyFrame::SendList()
         //wxString wS3(c3);
         wxMicroSleep(1000);
 
-
         //wxLogMessage("|| %s | %s | %s", wS1, wS2, wS3);
         //wxLogMessage("");
-        //wxMicroSleep(100000);
 
       }
-      //wxMicroSleep(100000);
-
     }
-
 }
