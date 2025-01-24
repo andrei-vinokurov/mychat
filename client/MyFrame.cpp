@@ -25,7 +25,7 @@ MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, wxT("Чат"), wxDefaultPosition
     SetStatusText(wxT("Добро пожаловать в Чат!")); //сообщение в информационной панели
 
     //создаем область перечня доступных клиентов
-    m_listCtrl = new wxListCtrl (m_Panel, LIST_ID, wxPoint (0,0), wxSize (0, 0), wxLC_REPORT);
+    m_listCtrl = new wxListCtrl (m_Panel, LIST_ID, wxPoint (0,0), wxSize (500, 500), wxLC_REPORT);
     m_listCtrl->AppendColumn (wxT("Имя"), wxLIST_FORMAT_CENTER, 200);
     m_listCtrl->AppendColumn ("IP", wxLIST_FORMAT_CENTER, 150);
     m_listCtrl->AppendColumn ("Port", wxLIST_FORMAT_CENTER, 150);
@@ -201,6 +201,7 @@ void MyFrame::OpenDialog(wxListEvent& event)
     //wxLogMessage("rabotaet!!!");
     //std::unique_ptr<MyDialog> myDial = std::make_unique<MyDialog>(m_Panel);
     MyDialog* myDial = new MyDialog(m_Panel);
+    myDial->Show(true);
     //wxPanel* panel(this);
     //myDial->Create(panel, wxID_ANY, wxT("Диалог"), wxDefaultPosition, wxSize(500, 600));
     //myDial->SetParent(m_myPanel);
