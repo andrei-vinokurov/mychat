@@ -8,7 +8,11 @@
 #include <wx/listctrl.h>
 #include <wx/log.h>
 #include <wx/msgdlg.h>
+<<<<<<< HEAD
 #include <wx/utils.h>
+=======
+#include <wx/utils.h> 
+>>>>>>> c3ed08142ec05c11a3957a9fd0b82446df6cc424
 #include <set>
 #include "client.h"
 

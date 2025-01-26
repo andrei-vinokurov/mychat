@@ -18,15 +18,14 @@ MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, wxT("Чат"), wxDefaultPosition
     menuBar->Append(menuFile, wxT("Файл")); //добавление пункта в панель Меню
     menuBar->Append(menuHelp, wxT("Помощь")); //добавление пункта в панель Меню
     SetMenuBar( menuBar ); //установка панели Меню в окно
-    m_Panel = new wxPanel();
+    m_Panel = new wxPanel(this, wxID_ANY, wxPoint (0,0), wxSize (500, 600));
     //wxPanel* panel = new wxPanel(this, wxID_ANY, wxPoint (0,0), wxSize (0,0));
     //m_myPanel = new MyPanel(panel);
     CreateStatusBar(); //информационная панель
     SetStatusText(wxT("Добро пожаловать в Чат!")); //сообщение в информационной панели
-    //привязка функций к пунктам меню
 
     //создаем область перечня доступных клиентов
-    m_listCtrl = new wxListCtrl (this, LIST_ID, wxPoint (0,0), wxSize (500, 500), wxLC_REPORT);
+    m_listCtrl = new wxListCtrl (m_Panel, LIST_ID, wxPoint (0,0), wxSize (500, 500), wxLC_REPORT);
     m_listCtrl->AppendColumn (wxT("Имя"), wxLIST_FORMAT_CENTER, 200);
     m_listCtrl->AppendColumn ("IP", wxLIST_FORMAT_CENTER, 150);
     m_listCtrl->AppendColumn ("Port", wxLIST_FORMAT_CENTER, 150);
@@ -184,7 +183,7 @@ void MyFrame::RecList()
         char c2[len2];
         m_sock->Read(c2, len2);
         wxString wS2(c2);
-        
+   
         unsigned char len3;
         m_sock->Read(&len3, 1);
         char c3[len3];
@@ -199,9 +198,18 @@ void MyFrame::RecList()
 
 void MyFrame::OpenDialog(wxListEvent& event)
 {
+<<<<<<< HEAD
     std::unique_ptr<MyDialog> myDial = std::make_unique<MyDialog>();
     //wxWindow* wW = (wxWindow*) this;
     //myDial->Create(wW, wxID_ANY, wxT("Диалог"), wxDefaultPosition, wxSize(500, 600));
+=======
+    //wxLogMessage("rabotaet!!!");
+    //std::unique_ptr<MyDialog> myDial = std::make_unique<MyDialog>(m_Panel);
+    MyDialog* myDial = new MyDialog(m_Panel);
+    myDial->Show(true);
+    //wxPanel* panel(this);
+    //myDial->Create(panel, wxID_ANY, wxT("Диалог"), wxDefaultPosition, wxSize(500, 600));
+>>>>>>> c3ed08142ec05c11a3957a9fd0b82446df6cc424
     //myDial->SetParent(m_myPanel);
 
 }
