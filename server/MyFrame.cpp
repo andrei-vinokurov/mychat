@@ -201,8 +201,10 @@ void MyFrame::SendList()
     for(auto i : m_sockets)
     {
       i->Write(&len, 1);
+      
       for(client j : m_clients)
       {
+
         const char* c1 = j.GetName().utf8_str();
         unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
         i->Write(&len1, 1);
@@ -223,10 +225,9 @@ void MyFrame::SendList()
 
         //wxLogMessage("|| %s | %s | %s", wS1, wS2, wS3);
         wxLogMessage("");
-
-
+        
       }
-
+      
     }
 
 }
