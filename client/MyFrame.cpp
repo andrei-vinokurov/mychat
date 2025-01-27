@@ -198,8 +198,7 @@ void MyFrame::RecList()
 
 void MyFrame::OpenDialog(wxListEvent& event)
 {
-    
-    MyDialog* myDial = new MyDialog(m_Panel);
+    MyDialog* myDial = new MyDialog(m_Panel, m_listCtrl->GetItemText(event.GetIndex(), 0), m_listCtrl->GetItemText(event.GetIndex(), 1), m_listCtrl->GetItemText(event.GetIndex(), 2));
     myDial->Show(true);
     
 }

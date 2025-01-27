@@ -153,13 +153,25 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
     {
 
       sock->SetNotify(wxSOCKET_LOST_FLAG);
-      // 
-      unsigned char len;
-      sock->Read(&len, 1);
-      char c[len];
-      sock->Read(c, len);
-      wxString wS(c);
-      wxLogMessage("|| %s ||", wS);
+      //
+      unsigned char len1;
+      sock->Read(&len1, 1);
+      char c1[len1];
+      sock->Read(c1, len1);
+      wxString wS1(c1);
+
+      unsigned char len2;
+      sock->Read(&len2, 1);
+      char c2[len2];
+      sock->Read(c2, len2);
+      wxString wS2(c2);
+
+      unsigned char len3;
+      sock->Read(&len3, 1);
+      char c3[len3];
+      sock->Read(c3, len3);
+      wxString wS3(c3);
+      wxLogMessage("|| %s | %s | %s", wS1, wS2, wS3);
 
 
       sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);

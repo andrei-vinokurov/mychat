@@ -10,14 +10,20 @@
 class MyDialog : public wxDialog
 {
 public:
-    MyDialog(wxPanel* parent);
+    MyDialog(wxPanel* parent, wxString name, wxString addr, wxString port);
     void SendText(wxCommandEvent& event);
+    wxString GetName();
+    wxString GetAddr();
+    wxString GetPort();
 
 private:
     wxTextCtrl* m_text1;
     wxTextCtrl* m_text2;
     wxButton* m_send;
     wxPanel* m_parent;
+    wxString m_name;
+    wxString m_addr;
+    wxString m_port;
 
 };
 

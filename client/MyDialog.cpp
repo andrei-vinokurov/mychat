@@ -1,9 +1,12 @@
 #include "MyDialog.h"
 #include "MyFrame.h"
 
-MyDialog::MyDialog(wxPanel* parent) : wxDialog(parent, wxID_ANY, wxT("Диалог"), wxDefaultPosition, wxSize(500, 600))
+MyDialog::MyDialog(wxPanel* parent, wxString name, wxString addr, wxString port) : wxDialog(parent, wxID_ANY, wxT("Диалог"), wxDefaultPosition, wxSize(500, 600))
 {
     m_parent = parent;
+    m_name = name;
+    m_addr = addr;
+    m_port = port;
     m_text1 = new wxTextCtrl(this, wxID_ANY, "", wxPoint (0, 0), wxSize (500, 300), wxTE_MULTILINE | wxTE_READONLY);
     m_text2 = new wxTextCtrl(this, wxID_ANY, "", wxPoint (0, 300), wxSize (500, 220), wxTE_MULTILINE);
     m_text1->SetBackgroundColour(*wxLIGHT_GREY);
@@ -14,14 +17,33 @@ MyDialog::MyDialog(wxPanel* parent) : wxDialog(parent, wxID_ANY, wxT("Диало
 
 void MyDialog::SendText(wxCommandEvent& event)
 {   
-    m_text1->AppendText(m_text2->GetValue() + "\n");
-    m_text2->SetValue("");
+    if(m_text2->GetValue() != "")
+    {
+        m_text1->AppendText(m_text2->GetValue() + "\n");
+        MyFrame* frameFromDialog = (MyFrame*) m_parent->GetParent();
+        
+        const char* c1 = m_addr.utf8_str();
+        unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
+        frameFromDialog->GetSocket()->Write(&len1, 1);
+        frameFromDialog->GetSocket()->Write(c1, len1);
+        
+        const char* c2 = m_port.utf8_str();
+        unsigned char len2 = (unsigned char)(wxStrlen(c2) + 1);
+        frameFromDialog->GetSocket()->Write(&len2, 1);
+        frameFromDialog->GetSocket()->Write(c2, len2);
+        
+        const char* c3 = m_text2->GetValue().utf8_str();
+        unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);
+        frameFromDialog->GetSocket()->Write(&len3, 1);
+        frameFromDialog->GetSocket()->Write(c3, len3);
+        
+        m_text2->SetValue("");
+    
+    }
     m_text2->SetFocus();
 
-    MyFrame* frameFromDialog = (MyFrame*) m_parent->GetParent();
-    const char* c = m_text2->GetValue().utf8_str();
-    unsigned char len = (unsigned char)(wxStrlen(c) + 1);
-    frameFromDialog->GetSocket()->Write(&len, 1);
-    frameFromDialog->GetSocket()->Write(c, len);
-
 }
+
+wxString MyDialog::GetName(){return m_name;}
+wxString MyDialog::GetAddr(){return m_addr;}
+wxString MyDialog::GetPort(){return m_port;}
