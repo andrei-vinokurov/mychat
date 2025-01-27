@@ -7,10 +7,9 @@
 #include <wx/socket.h>
 #include <wx/listctrl.h>
 #include <wx/log.h>
+#include <set>
 //#include "MyPanel.h"
 #include "MyDialog.h"
-#include <memory>
-#include <set>
 #include "client.h"
 
 
@@ -18,6 +17,7 @@ class MyFrame : public wxFrame
 {
 public:
     MyFrame();
+    wxSocketClient* GetSocket();
     //MyPanel* m_myPanel; //окно класса MyPanel, где расположены основные объекты
     
 private:

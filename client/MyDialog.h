@@ -17,6 +17,7 @@ private:
     wxTextCtrl* m_text1;
     wxTextCtrl* m_text2;
     wxButton* m_send;
+    wxPanel* m_parent;
 
 };
 

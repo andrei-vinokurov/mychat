@@ -198,12 +198,13 @@ void MyFrame::RecList()
 
 void MyFrame::OpenDialog(wxListEvent& event)
 {
-    //wxLogMessage("rabotaet!!!");
-    //std::unique_ptr<MyDialog> myDial = std::make_unique<MyDialog>(m_Panel);
+    
     MyDialog* myDial = new MyDialog(m_Panel);
     myDial->Show(true);
-    //wxPanel* panel(this);
-    //myDial->Create(panel, wxID_ANY, wxT("Диалог"), wxDefaultPosition, wxSize(500, 600));
-    //myDial->SetParent(m_myPanel);
+    
+}
 
+wxSocketClient* MyFrame::GetSocket()
+{
+    return m_sock;
 }
