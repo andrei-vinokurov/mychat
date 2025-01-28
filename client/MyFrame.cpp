@@ -217,10 +217,29 @@ void MyFrame::RecList()
 
 void MyFrame::OpenDialog(wxListEvent& event)
 {
+    MyDialog* mD = nullptr;
+    for(MyDialog* i : m_vecDial)
+    {
+        if(i->GetAddr() == m_listCtrl->GetItemText(event.GetIndex(), 1) && i->GetPort() == m_listCtrl->GetItemText(event.GetIndex(), 2))
+        {
+            mD = i;
+            wxLogMessage(wxT("есть такой диалог"));
+            break;   
+        }
+    }
+    if(!mD)
+    {
+        mD = new MyDialog(m_Panel, m_listCtrl->GetItemText(event.GetIndex(), 0), m_listCtrl->GetItemText(event.GetIndex(), 1), m_listCtrl->GetItemText(event.GetIndex(), 2));
+        m_vecDial.push_back(mD);
+    }
+    mD->Show(true);
+
+    
+    /*
     MyDialog* myDial = new MyDialog(m_Panel, m_listCtrl->GetItemText(event.GetIndex(), 0), m_listCtrl->GetItemText(event.GetIndex(), 1), m_listCtrl->GetItemText(event.GetIndex(), 2));
     myDial->Show(true);
     m_vecDial.push_back(myDial);
-    
+    */
 }
 
 wxSocketClient* MyFrame::GetSocket()
@@ -250,4 +269,23 @@ void MyFrame::GetMsg()
 
     //m_text1->AppendText(wS3 + "\n");
     wxLogMessage(wxT("Все норм"));
+
+    MyDialog* mD = nullptr;
+    for(MyDialog* i : m_vecDial)
+    {
+        if(i->GetAddr() == wS1 && i->GetPort() == wS2)
+        {
+            mD = i;
+            wxLogMessage(wxT("есть такой диалог"));
+            break;   
+        }
+    }
+    if(!mD)
+    {
+        mD = new MyDialog(m_Panel, "noname", wS1, wS2);
+        m_vecDial.push_back(mD);
+    }
+    mD->Show(true);
+    mD->m_text1->AppendText(wS3 + "\n");
+    mD->m_text2->SetFocus();
 }

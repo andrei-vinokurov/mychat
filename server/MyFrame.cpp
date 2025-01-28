@@ -178,12 +178,14 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
           unsigned char c = 0xCE;
           i.GetSock()->Write(&c, 1);
 
-          const char* c1 = i.GetAddress().utf8_str();
+          //const char* c1 = i.GetAddress().utf8_str();
+          const char* c1 = addr.IPAddress();
           unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
           i.GetSock()->Write(&len1, 1);
           i.GetSock()->Write(c1, len1);
           
-          const char* c2 = i.GetPort().utf8_str();
+          //const char* c2 = i.GetPort().utf8_str();
+          const char* c2 = wxString::Format(wxT("%d"), addr.Service());
           unsigned char len2 = (unsigned char)(wxStrlen(c2) + 1);
           i.GetSock()->Write(&len2, 1);
           i.GetSock()->Write(c2, len2);
