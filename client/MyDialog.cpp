@@ -15,6 +15,19 @@ MyDialog::MyDialog(wxPanel* parent, wxString name, wxString addr, wxString port)
     m_send->Bind(wxEVT_BUTTON, &MyDialog::SendText, this);
 }
 
+MyDialog::~MyDialog()
+{
+    MyFrame* frameFromDialDestr = (MyFrame*) m_parent->GetParent();
+    for (unsigned int i = 0; i < frameFromDialDestr->m_vecDial.size(); ++i)
+    {
+        if(this == frameFromDialDestr->m_vecDial.at(i))
+        {
+            frameFromDialDestr->m_vecDial.erase(frameFromDialDestr->m_vecDial.begin() + i);
+        }
+    }
+
+}
+
 void MyDialog::SendText(wxCommandEvent& event)
 {   
     if(m_text2->GetValue() != "")

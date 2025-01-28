@@ -1,7 +1,7 @@
 #include "client.h"
 
-client::client(wxString name,  wxString address,  wxString port):
-m_Name(name), m_Address(address), m_Port(port)
+client::client(wxString name,  wxString address,  wxString port, wxSocketBase* sock):
+m_Name(name), m_Address(address), m_Port(port), m_Sock(sock)
 {}
 
 bool client::operator<(const client& r) const
@@ -26,4 +26,9 @@ wxString client::GetAddress()
 wxString client::GetPort()
 {
     return m_Port;
+}
+
+wxSocketBase* client::GetSock()
+{
+    return m_Sock;
 }

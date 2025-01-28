@@ -109,16 +109,14 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
       wxLogMessage(wxT("Новый клиент %s:%u присоединился"),
                    addr.IPAddress(), addr.Service());
 
-      client newClient (wxString::FromUTF8("noname"), addr.IPAddress(), wxString::Format(wxT("%d"), addr.Service()));
-      m_clients.insert(newClient);
-
-      
-
       sock->SetEventHandler(*this, SOCKET_ID);
       sock->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_LOST_FLAG);
       sock->Notify(true);
 
-      m_sockets.insert(sock);
+      client newClient (wxString::FromUTF8("noname"), addr.IPAddress(), wxString::Format(wxT("%d"), addr.Service()), sock);
+      m_clients.insert(newClient);
+
+      //m_sockets.insert(sock);
       
       UpdateList();
       
@@ -173,23 +171,52 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
       wxString wS3(c3);
       wxLogMessage("|| %s | %s | %s", wS1, wS2, wS3);
 
+      for(client i : m_clients)
+      {
+        if(i.GetAddress() == wS1 && i.GetPort() == wS2 && i.GetSock()->IsOk())
+        {
+          unsigned char c = 0xCE;
+          i.GetSock()->Write(&c, 1);
+
+          const char* c1 = i.GetAddress().utf8_str();
+          unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
+          i.GetSock()->Write(&len1, 1);
+          i.GetSock()->Write(c1, len1);
+          
+          const char* c2 = i.GetPort().utf8_str();
+          unsigned char len2 = (unsigned char)(wxStrlen(c2) + 1);
+          i.GetSock()->Write(&len2, 1);
+          i.GetSock()->Write(c2, len2);
+          
+          const char* c3 = wS3.utf8_str();
+          unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);
+          i.GetSock()->Write(&len3, 1);
+          i.GetSock()->Write(c3, len3);
+        }
+      }
+
 
       sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
       break;
     }
     case wxSOCKET_LOST:
     {
+      
       for(client c : m_clients)
       {
+        /*
         if(c.GetAddress() == addr.IPAddress() && 
            c.GetPort() == wxString::Format(wxT("%d"), addr.Service())) 
+        */
+        if(c.GetSock() == sock)
         {
           m_clients.erase(c);
           break;
         }
       }
+      
 
-      m_sockets.erase(sock);
+      //m_sockets.erase(sock);
       
       UpdateList();
 
@@ -205,20 +232,21 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
 void MyFrame::UpdateList()
 {
   m_listCtrl->DeleteAllItems();
-  for(client c : m_clients)
+  for(client i : m_clients)
   {
     m_listCtrl->InsertItem (0, "");
-    m_listCtrl->SetItem (0, 0, c.GetName());  
-    m_listCtrl->SetItem (0, 1, c.GetAddress(), -1);     
-    m_listCtrl->SetItem (0, 2, c.GetPort(), -1);
+    m_listCtrl->SetItem (0, 0, i.GetName());  
+    m_listCtrl->SetItem (0, 1, i.GetAddress(), -1);     
+    m_listCtrl->SetItem (0, 2, i.GetPort(), -1);
   }
   SendList();
 }
 
 void MyFrame::SendList()
 {
+    unsigned char c = 0xBE;
     unsigned char len = m_clients.size();
-    for(auto i : m_sockets)
+    /*for(auto i : m_sockets)
     {
       i->Write(&len, 1);
       for(client j : m_clients)
@@ -241,6 +269,39 @@ void MyFrame::SendList()
         unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);
         i->Write(&len3, 1);
         i->Write(c3, len3);
+        //wxString wS3(c3);
+        wxMicroSleep(1000);
+
+        //wxLogMessage("|| %s | %s | %s", wS1, wS2, wS3);
+        //wxLogMessage("");
+
+      }
+    }*/
+
+    for(auto i : m_clients)
+    {
+      i.GetSock()->Write(&c, 1);
+      i.GetSock()->Write(&len, 1);
+      for(client j : m_clients)
+      {
+        const char* c1 = j.GetName().utf8_str();
+        unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
+        i.GetSock()->Write(&len1, 1);
+        i.GetSock()->Write(c1, len1);
+        //wxString wS1(c1);
+        wxMicroSleep(1000);
+
+        const char* c2 = j.GetAddress().utf8_str();
+        unsigned char len2 = (unsigned char)(wxStrlen(c2) + 1);
+        i.GetSock()->Write(&len2, 1);
+        i.GetSock()->Write(c2, len2);
+        //wxString wS2(c2);
+        wxMicroSleep(1000);
+
+        const char* c3 = j.GetPort().utf8_str();
+        unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);
+        i.GetSock()->Write(&len3, 1);
+        i.GetSock()->Write(c3, len3);
         //wxString wS3(c3);
         wxMicroSleep(1000);
 

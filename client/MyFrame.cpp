@@ -120,8 +120,27 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
         case wxSOCKET_INPUT:
         {
 //            wxLogMessage("Input available on the socket");
+            unsigned char c;
+            m_sock->Read(&c, 1);
+
+            switch (c)
+            {
+                case 0xBE:
+                { 
+                    UpdateList(); 
+                    break;
+                }
+                case 0xCE:
+                {
+                    GetMsg(); 
+                    break;
+                }
+                default:
+                wxLogMessage(wxT("Получено неизвестное сообщение"));
+            }
+
+
             
-            UpdateList();
 
             break;
         }
@@ -200,10 +219,35 @@ void MyFrame::OpenDialog(wxListEvent& event)
 {
     MyDialog* myDial = new MyDialog(m_Panel, m_listCtrl->GetItemText(event.GetIndex(), 0), m_listCtrl->GetItemText(event.GetIndex(), 1), m_listCtrl->GetItemText(event.GetIndex(), 2));
     myDial->Show(true);
+    m_vecDial.push_back(myDial);
     
 }
 
 wxSocketClient* MyFrame::GetSocket()
 {
     return m_sock;
+}
+
+void MyFrame::GetMsg()
+{
+    unsigned char len1;
+    m_sock->Read(&len1, 1);
+    char c1[len1];
+    m_sock->Read(c1, len1);
+    wxString wS1(c1);
+
+    unsigned char len2;
+    m_sock->Read(&len2, 1); 
+    char c2[len2];
+    m_sock->Read(c2, len2);
+    wxString wS2(c2);
+   
+    unsigned char len3;
+    m_sock->Read(&len3, 1);
+    char c3[len3];
+    m_sock->Read(c3, len3);       
+    wxString wS3(c3);
+
+    //m_text1->AppendText(wS3 + "\n");
+    wxLogMessage(wxT("Все норм"));
 }

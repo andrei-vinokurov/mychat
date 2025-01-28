@@ -8,6 +8,7 @@
 #include <wx/listctrl.h>
 #include <wx/log.h>
 #include <set>
+#include <vector>
 //#include "MyPanel.h"
 #include "MyDialog.h"
 #include "client.h"
@@ -18,6 +19,7 @@ class MyFrame : public wxFrame
 public:
     MyFrame();
     wxSocketClient* GetSocket();
+    std::vector <MyDialog*> m_vecDial;
     //MyPanel* m_myPanel; //окно класса MyPanel, где расположены основные объекты
     
 private:
@@ -46,6 +48,8 @@ private:
     void RecList();
 
     void OpenDialog(wxListEvent& event);
+
+    void GetMsg();
 
 };
 

@@ -11,6 +11,7 @@ class MyDialog : public wxDialog
 {
 public:
     MyDialog(wxPanel* parent, wxString name, wxString addr, wxString port);
+    ~MyDialog();
     void SendText(wxCommandEvent& event);
     wxString GetName();
     wxString GetAddr();
