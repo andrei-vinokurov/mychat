@@ -171,31 +171,55 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
       wxString wS3(c3);
       wxLogMessage("|| %s | %s | %s", wS1, wS2, wS3);
 
+      client* cl = nullptr;
       for(client i : m_clients)
       {
         if(i.GetAddress() == wS1 && i.GetPort() == wS2 && i.GetSock()->IsOk())
         {
+          cl = &i;
+          break;
+        }
+      }
+
+      if(cl)
+      {
           unsigned char c = 0xCE;
-          i.GetSock()->Write(&c, 1);
+          cl->GetSock()->Write(&c, 1);
 
           //const char* c1 = i.GetAddress().utf8_str();
           const char* c1 = addr.IPAddress();
           unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
-          i.GetSock()->Write(&len1, 1);
-          i.GetSock()->Write(c1, len1);
+          cl->GetSock()->Write(&len1, 1);
+          cl->GetSock()->Write(c1, len1);
           
           //const char* c2 = i.GetPort().utf8_str();
           const char* c2 = wxString::Format(wxT("%d"), addr.Service());
           unsigned char len2 = (unsigned char)(wxStrlen(c2) + 1);
-          i.GetSock()->Write(&len2, 1);
-          i.GetSock()->Write(c2, len2);
+          cl->GetSock()->Write(&len2, 1);
+          cl->GetSock()->Write(c2, len2);
           
           const char* c3 = wS3.utf8_str();
           unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);
-          i.GetSock()->Write(&len3, 1);
-          i.GetSock()->Write(c3, len3);
-        }
+          cl->GetSock()->Write(&len3, 1);
+          cl->GetSock()->Write(c3, len3);
       }
+      else
+      {
+          unsigned char c = 0xDE;
+          sock->Write(&c, 1);
+
+          const char* c1 = wS1;
+          unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
+          sock->Write(&len1, 1);
+          sock->Write(c1, len1);
+            
+          const char* c2 = wS2;
+          unsigned char len2 = (unsigned char)(wxStrlen(c2) + 1);
+          sock->Write(&len2, 1);
+          sock->Write(c2, len2);
+      }
+
+
 
 
       sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);

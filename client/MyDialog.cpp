@@ -23,6 +23,7 @@ MyDialog::~MyDialog()
         if(this == frameFromDialDestr->m_vecDial.at(i))
         {
             frameFromDialDestr->m_vecDial.erase(frameFromDialDestr->m_vecDial.begin() + i);
+            break;
         }
     }
 

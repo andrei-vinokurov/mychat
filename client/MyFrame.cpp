@@ -135,6 +135,11 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
                     GetMsg(); 
                     break;
                 }
+                case 0xDE:
+                {
+                    NoAnswer(); 
+                    break;
+                }
                 default:
                 wxLogMessage(wxT("Получено неизвестное сообщение"));
             }
@@ -287,5 +292,32 @@ void MyFrame::GetMsg()
     }
     mD->Show(true);
     mD->m_text1->AppendText(wS3 + "\n");
-    mD->m_text2->SetFocus();
+    //mD->m_text2->SetFocus();
+}
+
+void MyFrame::NoAnswer()
+{
+    unsigned char len1;
+    m_sock->Read(&len1, 1);
+    char c1[len1];
+    m_sock->Read(c1, len1);
+    wxString wS1(c1);
+
+    unsigned char len2;
+    m_sock->Read(&len2, 1); 
+    char c2[len2];
+    m_sock->Read(c2, len2);
+    wxString wS2(c2);
+
+    for(MyDialog* i : m_vecDial)
+    {
+        if(i->GetAddr() == wS1 && i->GetPort() == wS2)
+        {
+            wxLogMessage(wxT("Клиент %s | %s | %s не отвечает"), i->GetName(), wS1, wS2);
+            break;   
+        }
+    }
+
+
+
 }
