@@ -53,6 +53,8 @@ private:
 
     void NoAnswer();
 
+    void CloseDialog(wxCloseEvent& event);
+
 };
 
 //идентификаторы некоторых элементов приложения
@@ -65,7 +67,8 @@ enum
     CLIENT_OPENIPV6,
 #endif
     CLIENT_CLOSE,
-    LIST_ID
+    LIST_ID,
+    DIAL_ID
 };
 
 #endif

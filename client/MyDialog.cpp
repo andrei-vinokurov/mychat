@@ -1,7 +1,7 @@
 #include "MyDialog.h"
 #include "MyFrame.h"
 
-MyDialog::MyDialog(wxPanel* parent, wxString name, wxString addr, wxString port) : wxDialog(parent, wxID_ANY, wxT("Диалог"), wxDefaultPosition, wxSize(500, 600))
+MyDialog::MyDialog(wxPanel* parent, wxString name, wxString addr, wxString port) : wxDialog(parent, DIAL_ID, wxT("Диалог"), wxDefaultPosition, wxSize(500, 600))
 {
     m_parent = parent;
     m_name = name;

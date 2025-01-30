@@ -40,6 +40,7 @@ MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, wxT("Чат"), wxDefaultPosition
     Bind(wxEVT_MENU, &MyFrame::OnCloseConnection, this, CLIENT_CLOSE);
     Bind(wxEVT_SOCKET, &MyFrame::OnSocketEvent, this, SOCKET_ID);
     Bind(wxEVT_LIST_ITEM_ACTIVATED, &MyFrame::OpenDialog, this, LIST_ID);
+    Bind(wxEVT_CLOSE_WINDOW, &MyFrame::CloseDialog, this, DIAL_ID);
     
 
     //создаем сокет
@@ -317,7 +318,13 @@ void MyFrame::NoAnswer()
             break;   
         }
     }
+}
 
+void MyFrame::CloseDialog(wxCloseEvent& event)
+{
+    //MyDialog* mD = nullptr;
+    MyDialog* mD = (MyDialog*) event.GetEventObject();
+    mD->Destroy();
 
 
 }
