@@ -53,7 +53,7 @@ private:
 
     void NoAnswer();
 
-    void CloseDialog(wxCloseEvent& event);
+    //void CloseDialog(wxCloseEvent& event);
 
 };
 
@@ -68,7 +68,7 @@ enum
 #endif
     CLIENT_CLOSE,
     LIST_ID,
-    DIAL_ID
+    //DIAL_ID
 };
 
 #endif

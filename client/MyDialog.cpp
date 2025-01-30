@@ -1,7 +1,7 @@
 #include "MyDialog.h"
 #include "MyFrame.h"
 
-MyDialog::MyDialog(wxPanel* parent, wxString name, wxString addr, wxString port) : wxDialog(parent, DIAL_ID, wxT("Диалог"), wxDefaultPosition, wxSize(500, 600))
+MyDialog::MyDialog(wxPanel* parent, wxString name, wxString addr, wxString port) : wxDialog(parent, wxID_ANY, wxT("Диалог"), wxDefaultPosition, wxSize(500, 600))
 {
     m_parent = parent;
     m_name = name;
@@ -13,10 +13,17 @@ MyDialog::MyDialog(wxPanel* parent, wxString name, wxString addr, wxString port)
     m_text2->SetFocus();
     m_send = new wxButton(this, wxID_ANY, wxT("Отправить"), wxPoint (200, 530), wxSize (100, 30));
     m_send->Bind(wxEVT_BUTTON, &MyDialog::SendText, this);
+    Bind(wxEVT_BUTTON, &MyDialog::SendText, this);
+    Bind(wxEVT_CLOSE_WINDOW, [this](wxCloseEvent&) {this->Destroy();});
 }
 
 MyDialog::~MyDialog()
 {
+    //m_text1->Destroy();
+    //m_text2->Destroy();
+    //m_send->Destroy();
+
+    
     MyFrame* frameFromDialDestr = (MyFrame*) m_parent->GetParent();
     for (unsigned int i = 0; i < frameFromDialDestr->m_vecDial.size(); ++i)
     {
@@ -26,8 +33,9 @@ MyDialog::~MyDialog()
             break;
         }
     }
-
+    
 }
+
 
 void MyDialog::SendText(wxCommandEvent& event)
 {   

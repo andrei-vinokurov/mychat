@@ -40,7 +40,7 @@ MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, wxT("Чат"), wxDefaultPosition
     Bind(wxEVT_MENU, &MyFrame::OnCloseConnection, this, CLIENT_CLOSE);
     Bind(wxEVT_SOCKET, &MyFrame::OnSocketEvent, this, SOCKET_ID);
     Bind(wxEVT_LIST_ITEM_ACTIVATED, &MyFrame::OpenDialog, this, LIST_ID);
-    Bind(wxEVT_CLOSE_WINDOW, &MyFrame::CloseDialog, this, DIAL_ID);
+    //Bind(wxEVT_CLOSE_WINDOW, &MyFrame::CloseDialog, this);
     
 
     //создаем сокет
@@ -320,11 +320,23 @@ void MyFrame::NoAnswer()
     }
 }
 
+/*
 void MyFrame::CloseDialog(wxCloseEvent& event)
 {
     //MyDialog* mD = nullptr;
     MyDialog* mD = (MyDialog*) event.GetEventObject();
-    mD->Destroy();
+    wxLogMessage(wxT("1диалог удален?"));
+    for (unsigned int i = 0; i < m_vecDial.size(); ++i)
+    {
+        if(mD == m_vecDial.at(i))
+        {
+            m_vecDial.erase(m_vecDial.begin() + i);
+            break;
+        }
+    }
 
+    mD->Destroy();
+    wxLogMessage(wxT("2диалог удален?"));
 
 }
+*/
