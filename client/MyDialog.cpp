@@ -41,6 +41,9 @@ void MyDialog::SendText(wxCommandEvent& event)
 {   
     if(m_text2->GetValue() != "")
     {
+        m_text1->SetDefaultStyle(wxTextAttr(*wxRED));
+        //m_text1->AppendText(wxT("%u (Вы)"), wxDateTime::GetHour().FormatISOTime());
+        m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
         m_text1->AppendText(m_text2->GetValue() + "\n");
         MyFrame* frameFromDialog = (MyFrame*) m_parent->GetParent();
         
@@ -54,7 +57,7 @@ void MyDialog::SendText(wxCommandEvent& event)
         frameFromDialog->GetSocket()->Write(&len2, 1);
         frameFromDialog->GetSocket()->Write(c2, len2);
         
-        const char* c3 = m_text2->GetValue().utf8_str();
+        const char* c3 = m_text2->GetValue().mb_str(wxConvLibc);
         unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);
         frameFromDialog->GetSocket()->Write(&len3, 1);
         frameFromDialog->GetSocket()->Write(c3, len3);

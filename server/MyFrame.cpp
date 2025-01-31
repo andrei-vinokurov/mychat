@@ -198,7 +198,7 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
           cl->GetSock()->Write(&len2, 1);
           cl->GetSock()->Write(c2, len2);
           
-          const char* c3 = wS3.utf8_str();
+          const char* c3 = wS3.mb_str(wxConvLibc);
           unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);
           cl->GetSock()->Write(&len3, 1);
           cl->GetSock()->Write(c3, len3);
@@ -310,7 +310,7 @@ void MyFrame::SendList()
       i.GetSock()->Write(&len, 1);
       for(client j : m_clients)
       {
-        const char* c1 = j.GetName().utf8_str();
+        const char* c1 = j.GetName().mb_str(wxConvLibc);
         unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
         i.GetSock()->Write(&len1, 1);
         i.GetSock()->Write(c1, len1);

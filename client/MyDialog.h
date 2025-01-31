@@ -6,6 +6,7 @@
 #include <wx/msgdlg.h>
 #include <wx/textdlg.h>
 #include <wx/button.h>
+#include <wx/datetime.h>
 
 class MyDialog : public wxDialog
 {
