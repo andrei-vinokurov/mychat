@@ -163,12 +163,57 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
       char c2[len2];
       sock->Read(c2, len2);
       wxString wS2(c2);
+      
+//      unsigned char len3;
+//      sock->Read(&len3, 1);
+      wxString wS3;
+      /*if(len3 < 128){
+        char c3[len3];
+        sock->Read(c3, len3);
+        wxString wS4(c3);
+        wS3 = wS4;
+      }
+      else
+      {*/
+/*      unsigned int len30 = len3 * 1024;
+wxLogMessage(wxT("Большой объем %d"), len30);
 
-      unsigned char len3;
-      sock->Read(&len3, 1);
-      char c3[len3];
-      sock->Read(c3, len3);
-      wxString wS3(c3);
+        wxCharBuffer buf(len3 * 1024);
+        sock->Read(buf.data(), len3 * 1024);
+        wxString wS4(buf.data());
+        wS3 = wS4;
+*/      //}
+      unsigned char a;
+      sock->Read(&a, 1);
+      unsigned int len3;
+      
+      switch(a)
+      {
+        case 0xEE:
+        {
+        char buf[4096];
+        wxUint32 len4 = sock->ReadMsg(buf, sizeof(buf)).LastCount();
+        wxString wS4(buf);
+        wS3 = wS4;
+        len3 = len4;
+        break;
+        }
+    
+        case 0xFE:
+        {
+        unsigned char len5;
+        sock->Read(&len5, 1);
+        char c3[len5];
+        sock->Read(c3, len5);
+        wxString wS5(c3);
+        wS3 = wS5;
+        len3 = len5;
+        break;
+        }
+
+        default: break;
+      }
+      
       wxLogMessage("|| %s | %s | %s", wS1, wS2, wS3);
 
       client* cl = nullptr;
@@ -197,11 +242,38 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
           unsigned char len2 = (unsigned char)(wxStrlen(c2) + 1);
           cl->GetSock()->Write(&len2, 1);
           cl->GetSock()->Write(c2, len2);
+
+          if(len3 > 255)
+          {
+            unsigned char a = 0xEE;
+            cl->GetSock()->Write(&a, 1);
+            cl->GetSock()->WriteMsg(wS3, len3);
+          }
+          else
+          {
+            unsigned char a = 0xFE;
+            cl->GetSock()->Write(&a, 1);
+            const char* c3 = wS3;
+            //unsigned char len3 = (unsigned char) a;
+            cl->GetSock()->Write(&len3, 1);
+            cl->GetSock()->Write(c3, len3);
+
+          }
           
-          const char* c3 = wS3.mb_str(wxConvLibc);
-          unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);
-          cl->GetSock()->Write(&len3, 1);
-          cl->GetSock()->Write(c3, len3);
+          //const char* c3 = wS3.mb_str(wxConvLibc);
+          //unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);
+//          cl->GetSock()->Write(&len3, 1);
+          /*if(len3 < 128)
+          {
+            cl->GetSock()->Write(c3, len3);
+          }
+          else
+          {*/
+//            wxCharBuffer buf1(wS3.mb_str(wxConvLibc));
+//            cl->GetSock()->Write(buf1, len3 * 1024);
+          //}
+
+          //wxLogMessage(wxT("Все отправлено ") + wS2);
       }
       else
       {

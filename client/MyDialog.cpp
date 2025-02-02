@@ -7,7 +7,7 @@ MyDialog::MyDialog(wxPanel* parent, wxString name, wxString addr, wxString port)
     m_name = name;
     m_addr = addr;
     m_port = port;
-    m_text1 = new wxTextCtrl(this, wxID_ANY, "", wxPoint (0, 0), wxSize (500, 300), wxTE_MULTILINE | wxTE_READONLY);
+    m_text1 = new wxTextCtrl(this, wxID_ANY, "", wxPoint (0, 0), wxSize (500, 300), wxTE_MULTILINE | wxTE_READONLY | wxTE_RICH);
     m_text2 = new wxTextCtrl(this, wxID_ANY, "", wxPoint (0, 300), wxSize (500, 220), wxTE_MULTILINE);
     m_text1->SetBackgroundColour(*wxLIGHT_GREY);
     m_text2->SetFocus();
@@ -41,12 +41,13 @@ void MyDialog::SendText(wxCommandEvent& event)
 {   
     if(m_text2->GetValue() != "")
     {
+        wxMicroSleep(1000);
         m_text1->SetDefaultStyle(wxTextAttr(*wxRED));
-        //m_text1->AppendText(wxT("%u (Вы)"), wxDateTime::GetHour().FormatISOTime());
+        m_text1->AppendText(wxNow() + wxT(" (Вы)")  + "\n"); //wxDateTime::GetHour().FormatISOTime());
         m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
-        m_text1->AppendText(m_text2->GetValue() + "\n");
+        m_text1->AppendText(m_text2->GetValue() + "\n\n");
         MyFrame* frameFromDialog = (MyFrame*) m_parent->GetParent();
-        
+
         const char* c1 = m_addr.utf8_str();
         unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
         frameFromDialog->GetSocket()->Write(&len1, 1);
@@ -56,12 +57,42 @@ void MyDialog::SendText(wxCommandEvent& event)
         unsigned char len2 = (unsigned char)(wxStrlen(c2) + 1);
         frameFromDialog->GetSocket()->Write(&len2, 1);
         frameFromDialog->GetSocket()->Write(c2, len2);
-        
+
+        unsigned int len3 = m_text2->GetValue().mb_str(wxConvLibc).length();
+        if(len3 > 255)
+        {
+            unsigned char a = 0xEE;
+            frameFromDialog->GetSocket()->Write(&a, 1);
+            frameFromDialog->GetSocket()->WriteMsg(m_text2->GetValue().mb_str(wxConvLibc), len3);
+        }
+        else
+        {
+            unsigned char a = 0xFE;
+            frameFromDialog->GetSocket()->Write(&a, 1);
+            const char* c3 = m_text2->GetValue().mb_str(wxConvLibc);
+            //unsigned char len3 = (unsigned char) a;
+            frameFromDialog->GetSocket()->Write(&len3, 1);
+            frameFromDialog->GetSocket()->Write(c3, len3);
+
+        }
+    /*    
         const char* c3 = m_text2->GetValue().mb_str(wxConvLibc);
-        unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);
-        frameFromDialog->GetSocket()->Write(&len3, 1);
-        frameFromDialog->GetSocket()->Write(c3, len3);
-        
+        //unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);
+        unsigned char len3 = (unsigned char)(m_text2->GetValue().mb_str(wxConvLibc).length() + 1);
+        unsigned char len30 = len3 / 1024 + 1;
+        frameFromDialog->GetSocket()->Write(&len30, 1);
+    */    /*if(len3 < 128)
+        {   
+            frameFromDialog->GetSocket()->Write(c3, len3);
+            wxLogMessage(wxT("Маленький объем %d"), len3);
+        }
+        else
+        {*/
+    /*
+            wxCharBuffer buf(m_text2->GetValue().mb_str(wxConvLibc));
+            frameFromDialog->GetSocket()->Write(buf, len3);
+            wxLogMessage(wxT("Большой объем %d"), len3);
+    */    //}
         m_text2->SetValue("");
     
     }

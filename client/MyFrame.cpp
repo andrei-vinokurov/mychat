@@ -229,7 +229,7 @@ void MyFrame::OpenDialog(wxListEvent& event)
         if(i->GetAddr() == m_listCtrl->GetItemText(event.GetIndex(), 1) && i->GetPort() == m_listCtrl->GetItemText(event.GetIndex(), 2))
         {
             mD = i;
-            wxLogMessage(wxT("есть такой диалог"));
+            //wxLogMessage(wxT("есть такой диалог"));
             break;   
         }
     }
@@ -266,15 +266,61 @@ void MyFrame::GetMsg()
     char c2[len2];
     m_sock->Read(c2, len2);
     wxString wS2(c2);
+
+    wxString wS3;
+
+    unsigned char a;
+    m_sock->Read(&a, 1);
+    unsigned int len3;
+
+    switch(a)
+    {
+        case 0xEE:
+        {
+        char buf[4096];
+        wxUint32 len4 = m_sock->ReadMsg(buf, sizeof(buf)).LastCount();
+        wxString wS4(buf);
+        wS3 = wS4;
+        len3 = len4;
+        break;
+        }
+    
+        case 0xFE:
+        {
+        unsigned char len5;
+        m_sock->Read(&len5, 1);
+        char c3[len5];
+        m_sock->Read(c3, len5);
+        wxString wS5(c3);
+        wS3 = wS5;
+        len3 = len5;
+        break;
+        }
+
+        default: break;
+      }
+
    
-    unsigned char len3;
-    m_sock->Read(&len3, 1);
-    char c3[len3];
-    m_sock->Read(c3, len3);       
-    wxString wS3(c3);
+//    unsigned char len3;
+//    m_sock->Read(&len3, 1);
+//    wxString wS3;
+      /*if(len3 < 128){
+        char c3[len3];
+        m_sock->Read(c3, len3);
+        wxString wS4(c3);
+        wS3 = wS4;
+      }
+      else
+      {*/
+//        wxCharBuffer buf(len3 * 1024);
+//        m_sock->Read(buf.data(), len3 * 1024);
+//        wxString wS4(buf.data());
+//        wS3 = wS4;
+        
+      //}
 
     //m_text1->AppendText(wS3 + "\n");
-    wxLogMessage(wxT("Все норм"));
+    //wxLogMessage(wxT("Все норм"));
 
     MyDialog* mD = nullptr;
     for(MyDialog* i : m_vecDial)
@@ -282,7 +328,7 @@ void MyFrame::GetMsg()
         if(i->GetAddr() == wS1 && i->GetPort() == wS2)
         {
             mD = i;
-            wxLogMessage(wxT("есть такой диалог"));
+            //wxLogMessage(wxT("есть такой диалог"));
             break;   
         }
     }
@@ -292,7 +338,10 @@ void MyFrame::GetMsg()
         m_vecDial.push_back(mD);
     }
     mD->Show(true);
-    mD->m_text1->AppendText(wS3 + "\n");
+    mD->m_text1->SetDefaultStyle(wxTextAttr(*wxBLUE));
+    mD->m_text1->AppendText(wxNow() + " " + mD->GetName() + "\n"); //wxDateTime::GetHour().FormatISOTime());
+    mD->m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
+    mD->m_text1->AppendText(wS3 + "\n\n");
     //mD->m_text2->SetFocus();
 }
 
