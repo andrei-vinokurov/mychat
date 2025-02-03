@@ -219,7 +219,7 @@ wxLogMessage(wxT("Большой объем %d"), len30);
       client* cl = nullptr;
       for(client i : m_clients)
       {
-        if(i.GetAddress() == wS1 && i.GetPort() == wS2 && i.GetSock()->IsOk())
+        if(i.GetAddress() == wS1 && i.GetPort() == wS2/* && i.GetSock()->IsOk()*/)
         {
           cl = &i;
           break;

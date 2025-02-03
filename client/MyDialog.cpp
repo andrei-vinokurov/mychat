@@ -56,7 +56,7 @@ void MyDialog::SendText(wxCommandEvent& event)
         frameFromDialog->GetSocket()->Write(&len2, 1);
         frameFromDialog->GetSocket()->Write(c2, len2);
 
-        unsigned int len3 = m_text2->GetValue().mb_str(wxConvLibc).length();
+        unsigned int len3 = m_text2->GetValue().mb_str(wxConvLibc).length() + 1;
         if(len3 > 255)
         {
             unsigned char a = 0xEE;
@@ -81,10 +81,10 @@ void MyDialog::SendText(wxCommandEvent& event)
         {
             case 0xAA:
             {*/
-                m_text1->SetDefaultStyle(wxTextAttr(*wxRED));
-                m_text1->AppendText(wxNow() + wxT(" (Вы)")  + "\n"); //wxDateTime::GetHour().FormatISOTime());
-                m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
-                m_text1->AppendText(m_text2->GetValue() + "\n\n");
+            m_text1->SetDefaultStyle(wxTextAttr(*wxRED));
+            m_text1->AppendText(wxNow() + wxT(" (Вы)")  + "\n"); //wxDateTime::GetHour().FormatISOTime());
+            m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
+            m_text1->AppendText(m_text2->GetValue() + "\n\n");
 /*                break;
             }
             default: 

@@ -364,15 +364,16 @@ void MyFrame::NoAnswer()
     char c2[len2];
     m_sock->Read(c2, len2);
     wxString wS2(c2);
+    
 
-    for(MyDialog* i : m_vecDial)
-    {
-        if(i->GetAddr() == wS1 && i->GetPort() == wS2)
-        {
-            wxLogMessage(wxT("Клиент %s | %s | %s не отвечает"), i->GetName(), wS1, wS2);
-            break;   
-        }
-    }
+//    for(MyDialog* i : m_vecDial)
+//    {
+//        if(i->GetAddr() == wS1 && i->GetPort() == wS2)
+//        {
+            wxLogMessage(wxT("Клиент  | %s | %s не отвечает"), /*i->GetName(),*/ wS1, wS2);
+//            break;   
+//        }
+//    }
 }
 
 /*
