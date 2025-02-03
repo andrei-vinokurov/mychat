@@ -342,6 +342,12 @@ void MyFrame::GetMsg()
     mD->m_text1->AppendText(wxNow() + " " + mD->GetName() + "\n"); //wxDateTime::GetHour().FormatISOTime());
     mD->m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
     mD->m_text1->AppendText(wS3 + "\n\n");
+
+    //m_sock->Write(c1, len1);
+    //m_sock->Write(c2, len2);
+//    unsigned char v = 0xAA;
+//    m_sock->Write(&v, 1);
+
     //mD->m_text2->SetFocus();
 }
 

@@ -39,14 +39,12 @@ MyDialog::~MyDialog()
 
 void MyDialog::SendText(wxCommandEvent& event)
 {   
-    if(m_text2->GetValue() != "")
+    MyFrame* frameFromDialog = (MyFrame*) m_parent->GetParent();
+    if(m_text2->GetValue() != "" && frameFromDialog->GetSocket()->IsOk())
     {
-        wxMicroSleep(1000);
-        m_text1->SetDefaultStyle(wxTextAttr(*wxRED));
-        m_text1->AppendText(wxNow() + wxT(" (Вы)")  + "\n"); //wxDateTime::GetHour().FormatISOTime());
-        m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
-        m_text1->AppendText(m_text2->GetValue() + "\n\n");
-        MyFrame* frameFromDialog = (MyFrame*) m_parent->GetParent();
+        //wxMicroSleep(1000);
+        
+        
 
         const char* c1 = m_addr.utf8_str();
         unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
@@ -75,6 +73,29 @@ void MyDialog::SendText(wxCommandEvent& event)
             frameFromDialog->GetSocket()->Write(c3, len3);
 
         }
+/*
+        unsigned char v;
+        frameFromDialog->GetSocket()->Read(&v, 1);
+
+        switch(v)
+        {
+            case 0xAA:
+            {*/
+                m_text1->SetDefaultStyle(wxTextAttr(*wxRED));
+                m_text1->AppendText(wxNow() + wxT(" (Вы)")  + "\n"); //wxDateTime::GetHour().FormatISOTime());
+                m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
+                m_text1->AppendText(m_text2->GetValue() + "\n\n");
+/*                break;
+            }
+            default: 
+            {
+                m_text1->SetDefaultStyle(wxTextAttr(*wxGREEN));
+                m_text1->AppendText(wxT("Сообщение не доставлено!\n\n"));
+                m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
+                break;
+            }
+        }
+*/
     /*    
         const char* c3 = m_text2->GetValue().mb_str(wxConvLibc);
         //unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);

@@ -260,6 +260,10 @@ wxLogMessage(wxT("Большой объем %d"), len30);
 
           }
           
+//          unsigned char v;
+//          cl->GetSock()->Read(&v, 1);
+//          if(v == 0xAA) sock->Write(&v, 1);
+          //else sock->Write(0, 1);
           //const char* c3 = wS3.mb_str(wxConvLibc);
           //unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);
 //          cl->GetSock()->Write(&len3, 1);
@@ -290,8 +294,6 @@ wxLogMessage(wxT("Большой объем %d"), len30);
           sock->Write(&len2, 1);
           sock->Write(c2, len2);
       }
-
-
 
 
       sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
