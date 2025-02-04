@@ -255,6 +255,8 @@ wxSocketClient* MyFrame::GetSocket()
 
 void MyFrame::GetMsg()
 {
+    m_sock->SetFlags(wxSOCKET_WAITALL);
+    
     unsigned char len1;
     m_sock->Read(&len1, 1);
     char c1[len1];
