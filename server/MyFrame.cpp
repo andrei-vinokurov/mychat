@@ -260,9 +260,10 @@ wxLogMessage(wxT("Большой объем %d"), len30);
 
           }
           
-//          unsigned char v;
-//          cl->GetSock()->Read(&v, 1);
-//          if(v == 0xAA) sock->Write(&v, 1);
+          unsigned char v;
+          cl->GetSock()->Read(&v, 1);
+//          if(v == 0xAA) 
+          sock->Write(&v, 1);
           //else sock->Write(0, 1);
           //const char* c3 = wS3.mb_str(wxConvLibc);
           //unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);

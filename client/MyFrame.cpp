@@ -345,8 +345,8 @@ void MyFrame::GetMsg()
 
     //m_sock->Write(c1, len1);
     //m_sock->Write(c2, len2);
-//    unsigned char v = 0xAA;
-//    m_sock->Write(&v, 1);
+    unsigned char v = 0xAA;
+    m_sock->Write(&v, 1);
 
     //mD->m_text2->SetFocus();
 }

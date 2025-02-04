@@ -26,6 +26,7 @@ private:
     wxString m_name;
     wxString m_addr;
     wxString m_port;
+    bool m_waitButton = false;
 
 };
 

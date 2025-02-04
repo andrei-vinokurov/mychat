@@ -39,6 +39,9 @@ MyDialog::~MyDialog()
 
 void MyDialog::SendText(wxCommandEvent& event)
 {   
+    if(!m_waitButton)
+    {
+    m_waitButton = true;
     MyFrame* frameFromDialog = (MyFrame*) m_parent->GetParent();
     if(m_text2->GetValue() != "" && frameFromDialog->GetSocket()->IsOk())
     {
@@ -73,29 +76,33 @@ void MyDialog::SendText(wxCommandEvent& event)
             frameFromDialog->GetSocket()->Write(c3, len3);
 
         }
-/*
-        unsigned char v;
+
+        unsigned char v = 0;
         frameFromDialog->GetSocket()->Read(&v, 1);
 
-        switch(v)
+/*        switch(v)
         {
             case 0xAA:
             {*/
+        if(v == 0xAA)
+        {
             m_text1->SetDefaultStyle(wxTextAttr(*wxRED));
             m_text1->AppendText(wxNow() + wxT(" (Вы)")  + "\n"); //wxDateTime::GetHour().FormatISOTime());
             m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
             m_text1->AppendText(m_text2->GetValue() + "\n\n");
+        }
 /*                break;
             }
-            default: 
-            {
+            default:*/
+        else
+        {
                 m_text1->SetDefaultStyle(wxTextAttr(*wxGREEN));
                 m_text1->AppendText(wxT("Сообщение не доставлено!\n\n"));
                 m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
-                break;
-            }
+//                break;
         }
-*/
+//        }
+
     /*    
         const char* c3 = m_text2->GetValue().mb_str(wxConvLibc);
         //unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);
@@ -118,6 +125,12 @@ void MyDialog::SendText(wxCommandEvent& event)
     
     }
     m_text2->SetFocus();
+
+    //wxMicroSleep(300000);
+
+    m_waitButton = false;
+
+    }
 
 }
 
