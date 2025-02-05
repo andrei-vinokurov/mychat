@@ -123,7 +123,7 @@ void MyDialog::SendText(wxCommandEvent& event)
             frameFromDialog->GetSocket()->Write(buf, len3);
             wxLogMessage(wxT("Большой объем %d"), len3);
     */    //}
-wxMicroSleep(500000);
+wxMicroSleep(300000);
 
         m_text2->SetValue("");
         

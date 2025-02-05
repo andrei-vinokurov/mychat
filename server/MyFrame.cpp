@@ -231,7 +231,7 @@ wxLogMessage(wxT("Большой объем %d"), len30);
 
       if(cl)
       {
-          cl->GetSock()->WaitForWrite(-1, 500);
+          cl->GetSock()->WaitForWrite(4);
           unsigned char c = 0xCE;
           cl->GetSock()->Write(&c, 1);
 
