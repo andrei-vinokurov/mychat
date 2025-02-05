@@ -300,7 +300,7 @@ void MyFrame::GetMsg()
         }
 
         default: break;
-      }
+    }
 
    
 //    unsigned char len3;

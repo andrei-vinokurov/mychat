@@ -10,6 +10,7 @@
 #include <wx/msgdlg.h>
 #include <wx/utils.h> 
 #include <set>
+#include <map>
 #include "client.h"
 
 // В настоящее время этот пример написан для использования сокетов только IP или только IPv6
@@ -31,6 +32,7 @@ private:
     wxTextCtrl* m_text;
     wxListCtrl* m_listCtrl;
     std::set <client> m_clients;
+    std::map <wxString, client> m_mapClients;
     //std::set <wxSocketBase*> m_sockets;
 
 

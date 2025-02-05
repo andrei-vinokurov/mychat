@@ -115,6 +115,7 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
 
       client newClient (wxString::FromUTF8("noname"), addr.IPAddress(), wxString::Format(wxT("%d"), addr.Service()), sock);
       m_clients.insert(newClient);
+      m_mapClients.emplace(wxString::Format(wxT("%d"), addr.Service()), newClient);
 
       //m_sockets.insert(sock);
       
@@ -216,18 +217,21 @@ wxLogMessage(wxT("Большой объем %d"), len30);
       
       wxLogMessage("|| %s | %s | %s", wS1, wS2, wS3);
 
-      client* cl = nullptr;
-      for(client i : m_clients)
-      {
-        if(i.GetAddress() == wS1 && i.GetPort() == wS2/* && i.GetSock()->IsOk()*/)
-        {
-          cl = &i;
-          break;
-        }
-      }
+//      client* cl = nullptr;
+//      for(client i : m_clients)
+//      {
+//        if(/*i.GetAddress() == wS1 &&*/ i.GetPort() == wS2/* && i.GetSock()->IsOk()*/)
+//        {
+//          cl = &i;
+//          break;
+//       }
+//      }
+
+      client* cl = &m_mapClients.find(wS2)->second;
 
       if(cl)
       {
+          cl->GetSock()->WaitForWrite(-1, 500);
           unsigned char c = 0xCE;
           cl->GetSock()->Write(&c, 1);
 
@@ -296,6 +300,7 @@ wxLogMessage(wxT("Большой объем %d"), len30);
           sock->Write(c2, len2);
       }
 
+wxLogMessage("send to || %s | %s | %s", wS1, wS2, wS3);
 
       sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
       break;
@@ -325,6 +330,7 @@ wxLogMessage(wxT("Большой объем %d"), len30);
       sock->Destroy();
       break;
     }
+
     default: ;
   }
 
