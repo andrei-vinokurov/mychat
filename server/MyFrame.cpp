@@ -231,7 +231,7 @@ wxLogMessage(wxT("Большой объем %d"), len30);
 
       if(cl)
       {
-          cl->GetSock()->WaitForWrite(4);
+          cl->GetSock()->WaitForWrite(3);
           unsigned char c = 0xCE;
           cl->GetSock()->Write(&c, 1);
 
@@ -264,10 +264,18 @@ wxLogMessage(wxT("Большой объем %d"), len30);
 
           }
           
-          unsigned char v;
-          cl->GetSock()->Read(&v, 1);
+          //if(cl->GetSock()->IsData())
+          //{
+          //  cl->GetSock()->WaitForRead(3);
+            unsigned char v;
+            cl->GetSock()->Read(&v, 1);
+          
 //          if(v == 0xAA) 
-          sock->Write(&v, 1);
+          //  if(cl->GetSock()->IsData())
+          //  {
+              sock->Write(&v, 1);
+          //  }
+          //}
           //else sock->Write(0, 1);
           //const char* c3 = wS3.mb_str(wxConvLibc);
           //unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);

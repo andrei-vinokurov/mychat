@@ -48,7 +48,9 @@ void MyDialog::SendText(wxCommandEvent& event)
     {
         //wxMicroSleep(1000);
         
-        frameFromDialog->GetSocket()->SetFlags(wxSOCKET_WAITALL);
+        //frameFromDialog->GetSocket()->SetFlags(wxSOCKET_WAITALL);
+
+        frameFromDialog->GetSocket()->Wait(8);
 
         const char* c1 = m_addr.utf8_str();
         unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
@@ -123,15 +125,16 @@ void MyDialog::SendText(wxCommandEvent& event)
             frameFromDialog->GetSocket()->Write(buf, len3);
             wxLogMessage(wxT("Большой объем %d"), len3);
     */    //}
-wxMicroSleep(300000);
+        wxMicroSleep(300000);
 
-        m_text2->SetValue("");
+        if(frameFromDialog->GetSocket()->IsData())
+        {
+            m_text2->SetValue("");
+            m_text2->SetFocus();
+        }
         
     
     }
-    
-    m_text2->SetFocus();
-    
 
     m_waitButton = false;
 
