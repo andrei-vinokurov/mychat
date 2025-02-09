@@ -257,7 +257,7 @@ void MyFrame::GetMsg()
 {
     //m_sock->SetFlags(wxSOCKET_WAITALL);
 
-    m_sock->WaitForRead(3);
+    //m_sock->WaitForRead(3);
     
     unsigned char len1;
     m_sock->Read(&len1, 1);

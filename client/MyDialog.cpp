@@ -50,7 +50,7 @@ void MyDialog::SendText(wxCommandEvent& event)
         
         //frameFromDialog->GetSocket()->SetFlags(wxSOCKET_WAITALL);
 
-        frameFromDialog->GetSocket()->Wait(8);
+        //frameFromDialog->GetSocket()->Wait(8);
 
         const char* c1 = m_addr.utf8_str();
         unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
@@ -79,32 +79,55 @@ void MyDialog::SendText(wxCommandEvent& event)
             frameFromDialog->GetSocket()->Write(c3, len3);
 
         }
+
+        if(frameFromDialog->GetSocket()->Error())
+        {
+            m_text1->SetDefaultStyle(wxTextAttr(*wxGREEN));
+            m_text1->AppendText(wxT("Сообщение не отправлено! Повторите попытку.\n\n"));
+            m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
+        }
         
         //frameFromDialog->GetSocket()->WaitForRead(2);
         unsigned char v = 0;
         frameFromDialog->GetSocket()->Read(&v, 1);
 
+        if(frameFromDialog->GetSocket()->Error())
+        {
+            m_text1->SetDefaultStyle(wxTextAttr(*wxGREEN));
+            m_text1->AppendText(wxT("Статус доставки сообщения неизвестен.\n\n"));
+            m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
+        }
+
 /*        switch(v)
         {
             case 0xAA:
             {*/
-        if(v == 0xAA)
+        else 
         {
-            m_text1->SetDefaultStyle(wxTextAttr(*wxRED));
-            m_text1->AppendText(wxNow() + wxT(" (Вы)")  + "\n"); //wxDateTime::GetHour().FormatISOTime());
-            m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
-            m_text1->AppendText(m_text2->GetValue() + "\n\n");
+            if(v == 0xAA)
+            {
+                m_text1->SetDefaultStyle(wxTextAttr(*wxRED));
+                m_text1->AppendText(wxNow() + wxT(" (Вы)")  + "\n"); //wxDateTime::GetHour().FormatISOTime());
+                m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
+                m_text1->AppendText(m_text2->GetValue() + "\n\n");
+            }
+            if(v == 0xAB)
+            {
+                m_text1->SetDefaultStyle(wxTextAttr(*wxGREEN));
+                m_text1->AppendText(wxT("Статус доставки сообщения неизвестен.\n\n"));
+                m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
+            }
         }
 /*                break;
             }
             default:*/
-        else
-        {
-                m_text1->SetDefaultStyle(wxTextAttr(*wxGREEN));
-                m_text1->AppendText(wxT("Сообщение не доставлено!\n\n"));
-                m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
+//        else
+//        {
+//                m_text1->SetDefaultStyle(wxTextAttr(*wxGREEN));
+//                m_text1->AppendText(wxT("Сообщение не доставлено!\n\n"));
+//                m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
 //                break;
-        }
+//        }
 //        }
 
     /*    
@@ -125,16 +148,18 @@ void MyDialog::SendText(wxCommandEvent& event)
             frameFromDialog->GetSocket()->Write(buf, len3);
             wxLogMessage(wxT("Большой объем %d"), len3);
     */    //}
-        wxMicroSleep(300000);
+        
 
-        if(frameFromDialog->GetSocket()->IsData())
-        {
+    //    if(frameFromDialog->GetSocket()->IsData())
+    //    {
             m_text2->SetValue("");
             m_text2->SetFocus();
-        }
+    //    }
         
     
     }
+
+    wxMicroSleep(300000);
 
     m_waitButton = false;
 
