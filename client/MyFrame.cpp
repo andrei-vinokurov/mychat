@@ -143,6 +143,7 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
                 }
                 default:
                 wxLogMessage(wxT("Получено неизвестное сообщение"));
+                break;
             }
 
 
@@ -370,14 +371,9 @@ void MyFrame::NoAnswer()
     wxString wS2(c2);
     
 
-//    for(MyDialog* i : m_vecDial)
-//    {
-//        if(i->GetAddr() == wS1 && i->GetPort() == wS2)
-//        {
-            wxLogMessage(wxT("Клиент  | %s | %s не отвечает"), /*i->GetName(),*/ wS1, wS2);
-//            break;   
-//        }
-//    }
+
+            wxLogMessage(wxT("Клиент  | %s | %s не отвечает"), wS1, wS2);
+
 }
 
 /*

@@ -214,6 +214,12 @@ wxLogMessage(wxT("Большой объем %d"), len30);
 
         default: break;
       }
+
+      if(sock->Error())
+      {
+        unsigned char v = 0xAB;
+        sock->Write(&v, 1);
+      }
       
       wxLogMessage("|| %s | %s | %s", wS1, wS2, wS3);
 
@@ -227,10 +233,12 @@ wxLogMessage(wxT("Большой объем %d"), len30);
 //       }
 //      }
 
-      client* cl = &m_mapClients.find(wS2)->second;
+      
 
-      if(cl)
+
+      if(m_mapClients.find(wS2) != m_mapClients.end())
       {
+          client* cl = &m_mapClients.find(wS2)->second;
           //cl->GetSock()->WaitForWrite(3);
           unsigned char c = 0xCE;
           cl->GetSock()->Write(&c, 1);
@@ -268,7 +276,7 @@ wxLogMessage(wxT("Большой объем %d"), len30);
           if(cl->GetSock()->Error())
           {
             v = 0xAB;
-            sock->Write(&v, 1);
+            //sock->Write(&v, 1);
           }
           
           //if(cl->GetSock()->IsData())
@@ -276,15 +284,20 @@ wxLogMessage(wxT("Большой объем %d"), len30);
           //  cl->GetSock()->WaitForRead(3);
           else
           {
+            wxLogMessage("send to || %s | %s | %s", wS1, wS2, wS3);
             
             cl->GetSock()->Read(&v, 1);
-            if(cl->GetSock()->Error()) v = 0xAB;
+            if(cl->GetSock()->Error()) 
+            {
+              v = 0xAB;
+            }
           
 //          if(v == 0xAA) 
           //  if(cl->GetSock()->IsData())
           //  {
-              sock->Write(&v, 1);
+              
           }
+          sock->Write(&v, 1);
           //  }
           //}
           //else sock->Write(0, 1);
@@ -319,7 +332,7 @@ wxLogMessage(wxT("Большой объем %d"), len30);
           sock->Write(c2, len2);
       }
 
-wxLogMessage("send to || %s | %s | %s", wS1, wS2, wS3);
+
 
       sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
       break;

@@ -48,7 +48,7 @@ void MyDialog::SendText(wxCommandEvent& event)
     {
         //wxMicroSleep(1000);
         
-        //frameFromDialog->GetSocket()->SetFlags(wxSOCKET_WAITALL);
+        frameFromDialog->GetSocket()->SetFlags(wxSOCKET_WAITALL);
 
         //frameFromDialog->GetSocket()->Wait(8);
 
@@ -153,7 +153,7 @@ void MyDialog::SendText(wxCommandEvent& event)
     //    if(frameFromDialog->GetSocket()->IsData())
     //    {
             m_text2->SetValue("");
-            m_text2->SetFocus();
+            
     //    }
         
     
@@ -164,6 +164,8 @@ void MyDialog::SendText(wxCommandEvent& event)
     m_waitButton = false;
 
     }
+
+    m_text2->SetFocus();
 
 }
 
