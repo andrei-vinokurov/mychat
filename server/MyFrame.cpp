@@ -315,6 +315,7 @@ wxLogMessage(wxT("Большой объем %d"), len30);
           //}
 
           //wxLogMessage(wxT("Все отправлено ") + wS2);
+    
       }
       else
       {

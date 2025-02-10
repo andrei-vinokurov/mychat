@@ -109,11 +109,15 @@ void MyDialog::SendText(wxCommandEvent& event)
                 m_text1->SetDefaultStyle(wxTextAttr(*wxRED));
                 m_text1->AppendText(wxNow() + wxT(" (Вы)")  + "\n"); //wxDateTime::GetHour().FormatISOTime());
                 m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
-                m_text1->AppendText(m_text2->GetValue() + "\n\n");
+                m_text1->AppendText(m_text2->GetValue() + "\n");
+
+                m_text1->SetDefaultStyle(wxTextAttr(*wxGREEN));
+                m_text1->AppendText(wxT("Сообщение доставлено\n\n"));
+                m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
             }
             if(v == 0xAB)
             {
-                m_text1->SetDefaultStyle(wxTextAttr(*wxGREEN));
+                m_text1->SetDefaultStyle(wxTextAttr(*wxLIGHT_GREY));
                 m_text1->AppendText(wxT("Статус доставки сообщения неизвестен.\n\n"));
                 m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
             }
