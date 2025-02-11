@@ -56,11 +56,12 @@ void MyDialog::SendText(wxCommandEvent& event)
         unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
         frameFromDialog->GetSocket()->Write(&len1, 1);
         frameFromDialog->GetSocket()->Write(c1, len1);
-        
+
         const char* c2 = m_port.utf8_str();
         unsigned char len2 = (unsigned char)(wxStrlen(c2) + 1);
         frameFromDialog->GetSocket()->Write(&len2, 1);
         frameFromDialog->GetSocket()->Write(c2, len2);
+
 
         unsigned int len3 = m_text2->GetValue().mb_str(wxConvLibc).length() + 1;
         if(len3 > 255)

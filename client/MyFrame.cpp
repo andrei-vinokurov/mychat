@@ -259,7 +259,8 @@ void MyFrame::GetMsg()
     //m_sock->SetFlags(wxSOCKET_WAITALL);
 
     //m_sock->WaitForRead(3);
-    
+if(m_sock->IsData())
+{
     unsigned char len1;
     m_sock->Read(&len1, 1);
     char c1[len1];
@@ -350,11 +351,25 @@ void MyFrame::GetMsg()
 
     //m_sock->Write(c1, len1);
     //m_sock->Write(c2, len2);
-    unsigned char v = 0xAA;
+    unsigned char v;
+    if(m_sock->Error())
+    {
+        //m_sock->Discard();
+        v = 0xAB;
+        //m_sock->WaitForWrite(1);
+    }
+    else
+    {
+        v = 0xAA;
+    }
     m_sock->Write(&v, 1);
+
+}
+
 
     //mD->m_text2->SetFocus();
 }
+
 
 void MyFrame::NoAnswer()
 {
@@ -373,6 +388,8 @@ void MyFrame::NoAnswer()
 
 
             wxLogMessage(wxT("Клиент  | %s | %s не отвечает"), wS1, wS2);
+
+
 
 }
 
