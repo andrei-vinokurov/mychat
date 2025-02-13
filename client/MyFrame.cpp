@@ -256,7 +256,7 @@ wxSocketClient* MyFrame::GetSocket()
 
 void MyFrame::GetMsg()
 {
-    //m_sock->SetFlags(wxSOCKET_WAITALL);
+    m_sock->SetFlags(wxSOCKET_NOWAIT);
 
     //m_sock->WaitForRead(3);
 if(m_sock->IsData())

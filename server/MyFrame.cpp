@@ -286,7 +286,9 @@ wxLogMessage(wxT("Большой объем %d"), len30);
           {
             wxLogMessage("send to || %s | %s | %s", wS1, wS2, wS3);
             
+
             cl->GetSock()->Read(&v, 1);
+
             if(cl->GetSock()->Error()) 
             {
               v = 0xAB;
