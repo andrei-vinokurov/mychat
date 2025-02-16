@@ -57,10 +57,34 @@ void MyDialog::SendText(wxCommandEvent& event)
         frameFromDialog->GetSocket()->Write(&len1, 1);
         frameFromDialog->GetSocket()->Write(c1, len1);
 
+////////////////////////////////////////
+
+        if(frameFromDialog->GetSocket()->Error())
+        {
+            m_text1->SetDefaultStyle(wxTextAttr(*wxGREEN));
+            m_text1->AppendText(wxT("Сообщение не отправлено! Повторите попытку.\n\n"));
+            m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
+        }
+
+////////////////////////////////////////
+
+
+
         const char* c2 = m_port.utf8_str();
         unsigned char len2 = (unsigned char)(wxStrlen(c2) + 1);
         frameFromDialog->GetSocket()->Write(&len2, 1);
         frameFromDialog->GetSocket()->Write(c2, len2);
+
+////////////////////////////////////////
+
+        if(frameFromDialog->GetSocket()->Error())
+        {
+            m_text1->SetDefaultStyle(wxTextAttr(*wxGREEN));
+            m_text1->AppendText(wxT("Сообщение не отправлено! Повторите попытку.\n\n"));
+            m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
+        }
+
+////////////////////////////////////////
 
 
         unsigned int len3 = m_text2->GetValue().mb_str(wxConvLibc).length() + 1;
@@ -81,12 +105,16 @@ void MyDialog::SendText(wxCommandEvent& event)
 
         }
 
+////////////////////////////////////////
+
         if(frameFromDialog->GetSocket()->Error())
         {
             m_text1->SetDefaultStyle(wxTextAttr(*wxGREEN));
             m_text1->AppendText(wxT("Сообщение не отправлено! Повторите попытку.\n\n"));
             m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
         }
+
+////////////////////////////////////////
         
         //frameFromDialog->GetSocket()->WaitForRead(2);
         unsigned char v = 0;
@@ -157,6 +185,7 @@ void MyDialog::SendText(wxCommandEvent& event)
 
     //    if(frameFromDialog->GetSocket()->IsData())
     //    {
+            frameFromDialog->GetSocket()->Discard();
             m_text2->SetValue("");
             
     //    }

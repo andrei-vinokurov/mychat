@@ -52,6 +52,7 @@ MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, wxT("Чат"), wxDefaultPosition
                     wxSOCKET_INPUT_FLAG |
                     wxSOCKET_LOST_FLAG);
     m_sock->Notify(true);
+    m_sock->SetTimeout(5);
 
 }
 
@@ -256,10 +257,10 @@ wxSocketClient* MyFrame::GetSocket()
 
 void MyFrame::GetMsg()
 {
-    m_sock->SetFlags(wxSOCKET_NOWAIT);
+    //m_sock->SetFlags(wxSOCKET_NOWAIT);
 
     //m_sock->WaitForRead(3);
-if(m_sock->IsData())
+if(m_sock->IsData() || (!(m_sock->IsData()) && m_sock->WaitForRead()))
 {
     unsigned char len1;
     m_sock->Read(&len1, 1);
@@ -365,8 +366,13 @@ if(m_sock->IsData())
     m_sock->Write(&v, 1);
 
 }
+else
+{
+    unsigned char v = 0xAB;
+    m_sock->Write(&v, 1);
+}
 
-
+m_sock->Discard();
     //mD->m_text2->SetFocus();
 }
 

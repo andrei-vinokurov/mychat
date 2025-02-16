@@ -138,6 +138,7 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
   wxSocketBase* sock = event.GetSocket();
   IPaddress addr;
   sock->GetPeer(addr);
+  sock->SetTimeout(5);
 
   switch(event.GetSocketEvent())
   {
@@ -153,6 +154,9 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
 
       sock->SetNotify(wxSOCKET_LOST_FLAG);
       //
+      if(sock->IsData() || (!(sock->IsData()) && sock->WaitForRead()))
+      {
+
       unsigned char len1;
       sock->Read(&len1, 1);
       char c1[len1];
@@ -215,11 +219,15 @@ wxLogMessage(wxT("Большой объем %d"), len30);
         default: break;
       }
 
+////////////////////////////////////
       if(sock->Error())
       {
+        wxLogMessage("Error1");
         unsigned char v = 0xAB;
         sock->Write(&v, 1);
+        return;
       }
+///////////////////////////////////
       
       wxLogMessage("|| %s | %s | %s", wS1, wS2, wS3);
 
@@ -243,17 +251,32 @@ wxLogMessage(wxT("Большой объем %d"), len30);
           unsigned char c = 0xCE;
           cl->GetSock()->Write(&c, 1);
 
+          if(cl->GetSock()->Error())
+          {
+            wxLogMessage("Error2-1");
+          }
+
           //const char* c1 = i.GetAddress().utf8_str();
           const char* c1 = addr.IPAddress();
           unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
           cl->GetSock()->Write(&len1, 1);
           cl->GetSock()->Write(c1, len1);
+
+          if(cl->GetSock()->Error())
+          {
+            wxLogMessage("Error2-2");
+          }
           
           //const char* c2 = i.GetPort().utf8_str();
           const char* c2 = wxString::Format(wxT("%d"), addr.Service());
           unsigned char len2 = (unsigned char)(wxStrlen(c2) + 1);
           cl->GetSock()->Write(&len2, 1);
           cl->GetSock()->Write(c2, len2);
+
+          if(cl->GetSock()->Error())
+          {
+            wxLogMessage("Error2-3");
+          }
 
           if(len3 > 255)
           {
@@ -275,6 +298,7 @@ wxLogMessage(wxT("Большой объем %d"), len30);
           unsigned char v;
           if(cl->GetSock()->Error())
           {
+            wxLogMessage("Error2");
             v = 0xAB;
             //sock->Write(&v, 1);
           }
@@ -291,7 +315,9 @@ wxLogMessage(wxT("Большой объем %d"), len30);
 
             if(cl->GetSock()->Error()) 
             {
+              wxLogMessage("Error3");
               v = 0xAB;
+
             }
           
 //          if(v == 0xAA) 
@@ -334,6 +360,9 @@ wxLogMessage(wxT("Большой объем %d"), len30);
           sock->Write(&len2, 1);
           sock->Write(c2, len2);
       }
+      }
+      sock->Discard();
+
 
 
 
