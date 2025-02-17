@@ -139,13 +139,14 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
   IPaddress addr;
   sock->GetPeer(addr);
   sock->SetTimeout(5);
-
+/*
   switch(event.GetSocketEvent())
   {
-    case wxSOCKET_INPUT : wxLogMessage("wxSOCKET_INPUT"); break; //s.Append("wxSOCKET_INPUT\n"); break;
-    case wxSOCKET_LOST  : wxLogMessage("wxSOCKET_LOST"); break; //s.Append("wxSOCKET_LOST\n"); break;
-    default             : wxLogMessage(wxT("Неизвестное событие")); break; //s.Append(_("Unexpected event !\n")); break;
+    case wxSOCKET_INPUT : wxLogMessage(wxT("Присоединение клиента")); break;
+    case wxSOCKET_LOST  : wxLogMessage(wxT("Отключение клиента")); break;
+    default             : wxLogMessage(wxT("Неизвестное событие")); break;
   }
+*/
 
   switch(event.GetSocketEvent())
   {
@@ -153,175 +154,191 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
     {
 
       sock->SetNotify(wxSOCKET_LOST_FLAG);
+
+      unsigned char err = 0;
       //
       if(sock->IsData() || (!(sock->IsData()) && sock->WaitForRead()))
       {
 
-      unsigned char len1;
-      sock->Read(&len1, 1);
-      char c1[len1];
-      sock->Read(c1, len1);
-      wxString wS1(c1);
+        unsigned char len1;
+        sock->Read(&len1, 1);
+        char c1[len1];
+        sock->Read(c1, len1);
+        wxString wS1(c1);
 
-      unsigned char len2;
-      sock->Read(&len2, 1);
-      char c2[len2];
-      sock->Read(c2, len2);
-      wxString wS2(c2);
-      
-      wxString wS3;
+        unsigned char len2;
+        sock->Read(&len2, 1);
+        char c2[len2];
+        sock->Read(c2, len2);
+        wxString wS2(c2);
+        
+        wxString wS3;
 
-      unsigned char a;
-      sock->Read(&a, 1);
-      unsigned int len3;
-      
-      switch(a)
-      {
-        case 0xEE:
+        unsigned char a;
+        sock->Read(&a, 1);
+        unsigned int len3;
+        
+        switch(a)
         {
-        char buf[4096];
-        wxUint32 len4 = sock->ReadMsg(buf, sizeof(buf)).LastCount();
-        wxString wS4(buf);
-        wS3 = wS4;
-        len3 = len4;
-        break;
-        }
-    
-        case 0xFE:
-        {
-        unsigned char len5;
-        sock->Read(&len5, 1);
-        char c3[len5];
-        sock->Read(c3, len5);
-        wxString wS5(c3);
-        wS3 = wS5;
-        len3 = len5;
-        break;
-        }
-
-        default: break;
-      }
-
-////////////////////////////////////
-      if(sock->Error())
-      {
-        wxLogMessage("Error1");
-        unsigned char v = 0xAB;
-        sock->Write(&v, 1);
-        return;
-      }
-///////////////////////////////////
+          case 0xEE:
+          {
+          char buf[4096];
+          wxUint32 len4 = sock->ReadMsg(buf, sizeof(buf)).LastCount();
+          wxString wS4(buf);
+          wS3 = wS4;
+          len3 = len4;
+          break;
+          }
       
-//      wxLogMessage("|| %s | %s | %s", wS1, wS2, wS3); //для проверки
-
-
-      if(m_mapClients.find(wS2) != m_mapClients.end())
-      {
-          client* cl = &m_mapClients.find(wS2)->second;
-
-          unsigned char c = 0xCE;
-          cl->GetSock()->Write(&c, 1);
-
-          ////////////////////////////////////
-          if(cl->GetSock()->Error())
+          case 0xFE:
           {
-            wxLogMessage("Error2-1");
-          }
-          ////////////////////////////////////
-
-          const char* c1 = addr.IPAddress();
-          unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
-          cl->GetSock()->Write(&len1, 1);
-          cl->GetSock()->Write(c1, len1);
-
-          ////////////////////////////////////
-          if(cl->GetSock()->Error())
-          {
-            wxLogMessage("Error2-2");
-          }
-          ////////////////////////////////////
-          
-          const char* c2 = wxString::Format(wxT("%d"), addr.Service());
-          unsigned char len2 = (unsigned char)(wxStrlen(c2) + 1);
-          cl->GetSock()->Write(&len2, 1);
-          cl->GetSock()->Write(c2, len2);
-
-          ////////////////////////////////////
-          if(cl->GetSock()->Error())
-          {
-            wxLogMessage("Error2-3");
-          }
-          ////////////////////////////////////
-
-          if(len3 > 255)
-          {
-            unsigned char a = 0xEE;
-            cl->GetSock()->Write(&a, 1);
-            cl->GetSock()->WriteMsg(wS3, len3);
-          }
-          else
-          {
-            unsigned char a = 0xFE;
-            cl->GetSock()->Write(&a, 1);
-            const char* c3 = wS3;
-            cl->GetSock()->Write(&len3, 1);
-            cl->GetSock()->Write(c3, len3);
-
+          unsigned char len5;
+          sock->Read(&len5, 1);
+          char c3[len5];
+          sock->Read(c3, len5);
+          wxString wS5(c3);
+          wS3 = wS5;
+          len3 = len5;
+          break;
           }
 
-          unsigned char v;
-          ///////////////////////////
-          if(cl->GetSock()->Error())
-          {
-            wxLogMessage("Error3");
-            v = 0xAB;
-          }
-          ///////////////////////////
-          
-          else
-          {
-            wxLogMessage("send to || %s | %s | %s", wS1, wS2, wS3);
-            
+          default: break;
+        }
 
-            cl->GetSock()->Read(&v, 1);
-            
-            ///////////////////////////
-            if(cl->GetSock()->Error()) 
+  ////////////////////////////////////
+        if(sock->Error())
+        {
+          wxLogMessage("Error1");
+          err = 0xAB;
+          goto label;
+        }
+  ///////////////////////////////////
+        
+  //      wxLogMessage("|| %s | %s | %s", wS1, wS2, wS3); //для проверки
+
+
+        if(m_mapClients.find(wS2) != m_mapClients.end())
+        {
+            client* cl = &m_mapClients.find(wS2)->second;
+
+            unsigned char c = 0xCE;
+            cl->GetSock()->Write(&c, 1);
+
+            ////////////////////////////////////
+            if(cl->GetSock()->Error())
             {
-              wxLogMessage("Error4");
-              v = 0xAB;
+              wxLogMessage("Error2-1");
+              err = 0xAB;
+              goto label;
+            }
+            ////////////////////////////////////
+
+            const char* c1 = addr.IPAddress();
+            unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
+            cl->GetSock()->Write(&len1, 1);
+            cl->GetSock()->Write(c1, len1);
+
+            ////////////////////////////////////
+            if(cl->GetSock()->Error())
+            {
+              wxLogMessage("Error2-2");
+              err = 0xAB;
+              goto label;
+            }
+            ////////////////////////////////////
+            
+            const char* c2 = wxString::Format(wxT("%d"), addr.Service());
+            unsigned char len2 = (unsigned char)(wxStrlen(c2) + 1);
+            cl->GetSock()->Write(&len2, 1);
+            cl->GetSock()->Write(c2, len2);
+
+            ////////////////////////////////////
+            if(cl->GetSock()->Error())
+            {
+              wxLogMessage("Error2-3");
+              err = 0xAB;
+              goto label;
+            }
+            ////////////////////////////////////
+
+            if(len3 > 255)
+            {
+              unsigned char a = 0xEE;
+              cl->GetSock()->Write(&a, 1);
+              cl->GetSock()->WriteMsg(wS3, len3);
+            }
+            else
+            {
+              unsigned char a = 0xFE;
+              cl->GetSock()->Write(&a, 1);
+              const char* c3 = wS3;
+              cl->GetSock()->Write(&len3, 1);
+              cl->GetSock()->Write(c3, len3);
+
+            }
+
+            ///////////////////////////
+            if(cl->GetSock()->Error())
+            {
+              wxLogMessage("Error3");
+              err = 0xAB;
+              goto label;
             }
             ///////////////////////////
-                       
-          }
-
-          sock->Write(&v, 1);    
-      }
-
-      else
-      {
-          unsigned char c = 0xDE;
-          sock->Write(&c, 1);
-
-          const char* c1 = wS1;
-          unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
-          sock->Write(&len1, 1);
-          sock->Write(c1, len1);
             
-          const char* c2 = wS2;
-          unsigned char len2 = (unsigned char)(wxStrlen(c2) + 1);
-          sock->Write(&len2, 1);
-          sock->Write(c2, len2);
-      }
-      }
-      sock->Discard();
+            else
+            {
+              //wxLogMessage("send to || %s | %s | %s", wS1, wS2, wS3); //для проверки
+              
+              unsigned char v;
+              cl->GetSock()->Read(&v, 1);
+              
+              ///////////////////////////
+              if(cl->GetSock()->Error()) 
+              {
+                wxLogMessage("Error4");
+                err = 0xAB;
+                goto label;
+              }
+              ///////////////////////////
+              else if(v == 0xAB)
+              {
+                err = v;
+                goto label;
+              }
+              else
+              {
+                sock->Write(&v, 1);
+              }                      
+            }            
+        }
 
+        else
+        {
+            unsigned char c = 0xDE;
+            sock->Write(&c, 1);
+
+            const char* c1 = wS1;
+            unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
+            sock->Write(&len1, 1);
+            sock->Write(c1, len1);
+              
+            const char* c2 = wS2;
+            unsigned char len2 = (unsigned char)(wxStrlen(c2) + 1);
+            sock->Write(&len2, 1);
+            sock->Write(c2, len2);
+        }
+      }
+
+    label:
+      if(err == 0xAB) sock->Write(&err, 1);
+      sock->Discard();
       sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
       break;
     }
+
     case wxSOCKET_LOST:
-    {
-      
+    {     
       for(client c : m_clients)
       {
         /*
