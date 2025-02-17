@@ -169,25 +169,8 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
       sock->Read(c2, len2);
       wxString wS2(c2);
       
-//      unsigned char len3;
-//      sock->Read(&len3, 1);
       wxString wS3;
-      /*if(len3 < 128){
-        char c3[len3];
-        sock->Read(c3, len3);
-        wxString wS4(c3);
-        wS3 = wS4;
-      }
-      else
-      {*/
-/*      unsigned int len30 = len3 * 1024;
-wxLogMessage(wxT("Большой объем %d"), len30);
 
-        wxCharBuffer buf(len3 * 1024);
-        sock->Read(buf.data(), len3 * 1024);
-        wxString wS4(buf.data());
-        wS3 = wS4;
-*/      //}
       unsigned char a;
       sock->Read(&a, 1);
       unsigned int len3;
@@ -229,54 +212,46 @@ wxLogMessage(wxT("Большой объем %d"), len30);
       }
 ///////////////////////////////////
       
-      wxLogMessage("|| %s | %s | %s", wS1, wS2, wS3);
-
-//      client* cl = nullptr;
-//      for(client i : m_clients)
-//      {
-//        if(/*i.GetAddress() == wS1 &&*/ i.GetPort() == wS2/* && i.GetSock()->IsOk()*/)
-//        {
-//          cl = &i;
-//          break;
-//       }
-//      }
-
-      
+//      wxLogMessage("|| %s | %s | %s", wS1, wS2, wS3); //для проверки
 
 
       if(m_mapClients.find(wS2) != m_mapClients.end())
       {
           client* cl = &m_mapClients.find(wS2)->second;
-          //cl->GetSock()->WaitForWrite(3);
+
           unsigned char c = 0xCE;
           cl->GetSock()->Write(&c, 1);
 
+          ////////////////////////////////////
           if(cl->GetSock()->Error())
           {
             wxLogMessage("Error2-1");
           }
+          ////////////////////////////////////
 
-          //const char* c1 = i.GetAddress().utf8_str();
           const char* c1 = addr.IPAddress();
           unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
           cl->GetSock()->Write(&len1, 1);
           cl->GetSock()->Write(c1, len1);
 
+          ////////////////////////////////////
           if(cl->GetSock()->Error())
           {
             wxLogMessage("Error2-2");
           }
+          ////////////////////////////////////
           
-          //const char* c2 = i.GetPort().utf8_str();
           const char* c2 = wxString::Format(wxT("%d"), addr.Service());
           unsigned char len2 = (unsigned char)(wxStrlen(c2) + 1);
           cl->GetSock()->Write(&len2, 1);
           cl->GetSock()->Write(c2, len2);
 
+          ////////////////////////////////////
           if(cl->GetSock()->Error())
           {
             wxLogMessage("Error2-3");
           }
+          ////////////////////////////////////
 
           if(len3 > 255)
           {
@@ -289,62 +264,40 @@ wxLogMessage(wxT("Большой объем %d"), len30);
             unsigned char a = 0xFE;
             cl->GetSock()->Write(&a, 1);
             const char* c3 = wS3;
-            //unsigned char len3 = (unsigned char) a;
             cl->GetSock()->Write(&len3, 1);
             cl->GetSock()->Write(c3, len3);
 
           }
 
           unsigned char v;
+          ///////////////////////////
           if(cl->GetSock()->Error())
           {
-            wxLogMessage("Error2");
+            wxLogMessage("Error3");
             v = 0xAB;
-            //sock->Write(&v, 1);
           }
+          ///////////////////////////
           
-          //if(cl->GetSock()->IsData())
-          //{
-          //  cl->GetSock()->WaitForRead(3);
           else
           {
             wxLogMessage("send to || %s | %s | %s", wS1, wS2, wS3);
             
 
             cl->GetSock()->Read(&v, 1);
-
+            
+            ///////////////////////////
             if(cl->GetSock()->Error()) 
             {
-              wxLogMessage("Error3");
+              wxLogMessage("Error4");
               v = 0xAB;
-
             }
-          
-//          if(v == 0xAA) 
-          //  if(cl->GetSock()->IsData())
-          //  {
-              
+            ///////////////////////////
+                       
           }
-          sock->Write(&v, 1);
-          //  }
-          //}
-          //else sock->Write(0, 1);
-          //const char* c3 = wS3.mb_str(wxConvLibc);
-          //unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);
-//          cl->GetSock()->Write(&len3, 1);
-          /*if(len3 < 128)
-          {
-            cl->GetSock()->Write(c3, len3);
-          }
-          else
-          {*/
-//            wxCharBuffer buf1(wS3.mb_str(wxConvLibc));
-//            cl->GetSock()->Write(buf1, len3 * 1024);
-          //}
 
-          //wxLogMessage(wxT("Все отправлено ") + wS2);
-    
+          sock->Write(&v, 1);    
       }
+
       else
       {
           unsigned char c = 0xDE;
@@ -362,9 +315,6 @@ wxLogMessage(wxT("Большой объем %d"), len30);
       }
       }
       sock->Discard();
-
-
-
 
       sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
       break;
@@ -385,7 +335,6 @@ wxLogMessage(wxT("Большой объем %d"), len30);
         }
       }
       
-
       //m_sockets.erase(sock);
       
       UpdateList();
@@ -417,37 +366,6 @@ void MyFrame::SendList()
 {
     unsigned char c = 0xBE;
     unsigned char len = m_clients.size();
-    /*for(auto i : m_sockets)
-    {
-      i->Write(&len, 1);
-      for(client j : m_clients)
-      {
-        const char* c1 = j.GetName().utf8_str();
-        unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
-        i->Write(&len1, 1);
-        i->Write(c1, len1);
-        //wxString wS1(c1);
-        wxMicroSleep(1000);
-
-        const char* c2 = j.GetAddress().utf8_str();
-        unsigned char len2 = (unsigned char)(wxStrlen(c2) + 1);
-        i->Write(&len2, 1);
-        i->Write(c2, len2);
-        //wxString wS2(c2);
-        wxMicroSleep(1000);
-
-        const char* c3 = j.GetPort().utf8_str();
-        unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);
-        i->Write(&len3, 1);
-        i->Write(c3, len3);
-        //wxString wS3(c3);
-        wxMicroSleep(1000);
-
-        //wxLogMessage("|| %s | %s | %s", wS1, wS2, wS3);
-        //wxLogMessage("");
-
-      }
-    }*/
 
     for(auto i : m_clients)
     {
@@ -459,26 +377,19 @@ void MyFrame::SendList()
         unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
         i.GetSock()->Write(&len1, 1);
         i.GetSock()->Write(c1, len1);
-        //wxString wS1(c1);
         wxMicroSleep(1000);
 
         const char* c2 = j.GetAddress().utf8_str();
         unsigned char len2 = (unsigned char)(wxStrlen(c2) + 1);
         i.GetSock()->Write(&len2, 1);
         i.GetSock()->Write(c2, len2);
-        //wxString wS2(c2);
         wxMicroSleep(1000);
 
         const char* c3 = j.GetPort().utf8_str();
         unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);
         i.GetSock()->Write(&len3, 1);
         i.GetSock()->Write(c3, len3);
-        //wxString wS3(c3);
         wxMicroSleep(1000);
-
-        //wxLogMessage("|| %s | %s | %s", wS1, wS2, wS3);
-        //wxLogMessage("");
-
       }
     }
 }
