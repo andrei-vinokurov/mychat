@@ -9,7 +9,6 @@
 #include <wx/log.h>
 #include <wx/msgdlg.h>
 #include <wx/utils.h> 
-#include <set>
 #include <map>
 #include "client.h"
 
@@ -31,10 +30,7 @@ private:
     wxSocketServer* m_server;
     wxTextCtrl* m_text;
     wxListCtrl* m_listCtrl;
-    std::set <client> m_clients;
     std::map <wxString, client> m_mapClients;
-    //std::set <wxSocketBase*> m_sockets;
-
 
     void OnExit(wxCommandEvent& event); //выход
     void OnAbout(wxCommandEvent& event); //о программе

@@ -97,7 +97,7 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
 
   sock = m_server->Accept(false);
 
-  if (sock /*&& m_sockets.find(sock) == m_sockets.end()*/)
+  if (sock)
   {
     IPaddress addr;
     if (!sock->GetPeer(addr))
@@ -114,15 +114,10 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
       sock->Notify(true);
 
       client newClient (wxString::FromUTF8("noname"), addr.IPAddress(), wxString::Format(wxT("%d"), addr.Service()), sock);
-      m_clients.insert(newClient);
       m_mapClients.emplace(wxString::Format(wxT("%d"), addr.Service()), newClient);
-
-      //m_sockets.insert(sock);
       
       UpdateList();
-      
     }
-
   }
   else
   {
@@ -156,7 +151,7 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
       sock->SetNotify(wxSOCKET_LOST_FLAG);
 
       unsigned char err = 0;
-      //
+
       if(sock->IsData() || (!(sock->IsData()) && sock->WaitForRead()))
       {
 
@@ -338,21 +333,11 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
     }
 
     case wxSOCKET_LOST:
-    {     
-      for(client c : m_clients)
+    {
+      if(auto search = m_mapClients.find(wxString::Format(wxT("%d"), addr.Service())); search != m_mapClients.end())
       {
-        /*
-        if(c.GetAddress() == addr.IPAddress() && 
-           c.GetPort() == wxString::Format(wxT("%d"), addr.Service())) 
-        */
-        if(c.GetSock() == sock)
-        {
-          m_clients.erase(c);
-          break;
-        }
+        m_mapClients.erase(search);
       }
-      
-      //m_sockets.erase(sock);
       
       UpdateList();
 
@@ -369,12 +354,12 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
 void MyFrame::UpdateList()
 {
   m_listCtrl->DeleteAllItems();
-  for(client i : m_clients)
+  for(auto& i : m_mapClients)
   {
     m_listCtrl->InsertItem (0, "");
-    m_listCtrl->SetItem (0, 0, i.GetName());  
-    m_listCtrl->SetItem (0, 1, i.GetAddress(), -1);     
-    m_listCtrl->SetItem (0, 2, i.GetPort(), -1);
+    m_listCtrl->SetItem (0, 0, i.second.GetName());  
+    m_listCtrl->SetItem (0, 1, i.second.GetAddress(), -1);     
+    m_listCtrl->SetItem (0, 2, i.second.GetPort(), -1);
   }
   SendList();
 }
@@ -382,30 +367,29 @@ void MyFrame::UpdateList()
 void MyFrame::SendList()
 {
     unsigned char c = 0xBE;
-    unsigned char len = m_clients.size();
-
-    for(auto i : m_clients)
+    unsigned char len = m_mapClients.size();
+    for(auto& i : m_mapClients)
     {
-      i.GetSock()->Write(&c, 1);
-      i.GetSock()->Write(&len, 1);
-      for(client j : m_clients)
+      i.second.GetSock()->Write(&c, 1);
+      i.second.GetSock()->Write(&len, 1);
+      for(auto& j : m_mapClients)
       {
-        const char* c1 = j.GetName().mb_str(wxConvLibc);
+        const char* c1 = j.second.GetName().mb_str(wxConvLibc);
         unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
-        i.GetSock()->Write(&len1, 1);
-        i.GetSock()->Write(c1, len1);
+        i.second.GetSock()->Write(&len1, 1);
+        i.second.GetSock()->Write(c1, len1);
         wxMicroSleep(1000);
 
-        const char* c2 = j.GetAddress().utf8_str();
+        const char* c2 = j.second.GetAddress().utf8_str();
         unsigned char len2 = (unsigned char)(wxStrlen(c2) + 1);
-        i.GetSock()->Write(&len2, 1);
-        i.GetSock()->Write(c2, len2);
+        i.second.GetSock()->Write(&len2, 1);
+        i.second.GetSock()->Write(c2, len2);
         wxMicroSleep(1000);
 
-        const char* c3 = j.GetPort().utf8_str();
+        const char* c3 = j.second.GetPort().utf8_str();
         unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);
-        i.GetSock()->Write(&len3, 1);
-        i.GetSock()->Write(c3, len3);
+        i.second.GetSock()->Write(&len3, 1);
+        i.second.GetSock()->Write(c3, len3);
         wxMicroSleep(1000);
       }
     }

@@ -19,11 +19,7 @@ MyDialog::MyDialog(wxPanel* parent, wxString name, wxString addr, wxString port)
 
 MyDialog::~MyDialog()
 {
-    //m_text1->Destroy();
-    //m_text2->Destroy();
-    //m_send->Destroy();
 
-    
     MyFrame* frameFromDialDestr = (MyFrame*) m_parent->GetParent();
     for (unsigned int i = 0; i < frameFromDialDestr->m_vecDial.size(); ++i)
     {
@@ -46,11 +42,8 @@ void MyDialog::SendText(wxCommandEvent& event)
 
     if(m_text2->GetValue() != "" && frameFromDialog->GetSocket()->IsOk())
     {
-        //wxMicroSleep(1000);
         
         frameFromDialog->GetSocket()->SetFlags(wxSOCKET_WAITALL);
-
-        //frameFromDialog->GetSocket()->Wait(8);
 
         const char* c1 = m_addr.utf8_str();
         unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
@@ -61,14 +54,12 @@ void MyDialog::SendText(wxCommandEvent& event)
 
         if(frameFromDialog->GetSocket()->Error())
         {
-            m_text1->SetDefaultStyle(wxTextAttr(*wxGREEN));
+            m_text1->SetDefaultStyle(wxTextAttr(*wxCYAN));
             m_text1->AppendText(wxT("Сообщение не отправлено! Повторите попытку.\n\n"));
             m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
         }
 
 ////////////////////////////////////////
-
-
 
         const char* c2 = m_port.utf8_str();
         unsigned char len2 = (unsigned char)(wxStrlen(c2) + 1);
@@ -79,13 +70,12 @@ void MyDialog::SendText(wxCommandEvent& event)
 
         if(frameFromDialog->GetSocket()->Error())
         {
-            m_text1->SetDefaultStyle(wxTextAttr(*wxGREEN));
+            m_text1->SetDefaultStyle(wxTextAttr(*wxCYAN));
             m_text1->AppendText(wxT("Сообщение не отправлено! Повторите попытку.\n\n"));
             m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
         }
 
 ////////////////////////////////////////
-
 
         unsigned int len3 = m_text2->GetValue().mb_str(wxConvLibc).length() + 1;
         if(len3 > 255)
@@ -109,7 +99,7 @@ void MyDialog::SendText(wxCommandEvent& event)
 
         if(frameFromDialog->GetSocket()->Error())
         {
-            m_text1->SetDefaultStyle(wxTextAttr(*wxGREEN));
+            m_text1->SetDefaultStyle(wxTextAttr(*wxCYAN));
             m_text1->AppendText(wxT("Сообщение не отправлено! Повторите попытку.\n\n"));
             m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
         }
@@ -122,15 +112,11 @@ void MyDialog::SendText(wxCommandEvent& event)
 
         if(frameFromDialog->GetSocket()->Error())
         {
-            m_text1->SetDefaultStyle(wxTextAttr(*wxGREEN));
+            m_text1->SetDefaultStyle(wxTextAttr(*wxCYAN));
             m_text1->AppendText(wxT("Статус доставки сообщения неизвестен.\n\n"));
             m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
         }
 
-/*        switch(v)
-        {
-            case 0xAA:
-            {*/
         else 
         {
             if(v == 0xAA)
@@ -143,53 +129,18 @@ void MyDialog::SendText(wxCommandEvent& event)
                 m_text1->SetDefaultStyle(wxTextAttr(*wxGREEN));
                 m_text1->AppendText(wxT("Сообщение доставлено\n\n"));
                 m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
+
+                m_text2->SetValue("");
             }
             if(v == 0xAB)
             {
-                m_text1->SetDefaultStyle(wxTextAttr(*wxLIGHT_GREY));
+                m_text1->SetDefaultStyle(wxTextAttr(*wxCYAN));
                 m_text1->AppendText(wxT("Статус доставки сообщения неизвестен.\n\n"));
                 m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
             }
         }
-/*                break;
-            }
-            default:*/
-//        else
-//        {
-//                m_text1->SetDefaultStyle(wxTextAttr(*wxGREEN));
-//                m_text1->AppendText(wxT("Сообщение не доставлено!\n\n"));
-//                m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
-//                break;
-//        }
-//        }
 
-    /*    
-        const char* c3 = m_text2->GetValue().mb_str(wxConvLibc);
-        //unsigned char len3 = (unsigned char)(wxStrlen(c3) + 1);
-        unsigned char len3 = (unsigned char)(m_text2->GetValue().mb_str(wxConvLibc).length() + 1);
-        unsigned char len30 = len3 / 1024 + 1;
-        frameFromDialog->GetSocket()->Write(&len30, 1);
-    */    /*if(len3 < 128)
-        {   
-            frameFromDialog->GetSocket()->Write(c3, len3);
-            wxLogMessage(wxT("Маленький объем %d"), len3);
-        }
-        else
-        {*/
-    /*
-            wxCharBuffer buf(m_text2->GetValue().mb_str(wxConvLibc));
-            frameFromDialog->GetSocket()->Write(buf, len3);
-            wxLogMessage(wxT("Большой объем %d"), len3);
-    */    //}
-        
-
-    //    if(frameFromDialog->GetSocket()->IsData())
-    //    {
             frameFromDialog->GetSocket()->Discard();
-            m_text2->SetValue("");
-            
-    //    }
-        
     
     }
 

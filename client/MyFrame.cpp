@@ -102,16 +102,15 @@ void MyFrame::OpenConnection(wxSockAddress::Family family)
     wxT("Введите адрес сервера"),
     wxT("Соединение ..."),
     "localhost");
-    if ( hostname.empty() )
-    return;
+    if (hostname.empty()) return;
     
-
     addr->Hostname(hostname);
     addr->Service(3000);
 
 //    wxLogMessage("Trying to connect to %s:%d", hostname, addr->Service());
 
     m_sock->Connect(*addr, false);
+    GetSocket()->GetPeer(m_addr);
 }
 
 void MyFrame::OnSocketEvent(wxSocketEvent& event)
@@ -146,14 +145,10 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
                 wxLogMessage(wxT("Получено неизвестное сообщение"));
                 break;
             }
-
-
-            
-
             break;
         }
         case wxSOCKET_LOST:
-            wxLogMessage("Socket connection was unexpectedly lost.");
+            wxLogMessage(wxT("Соединение было потеряно"));
 
             m_listCtrl->DeleteAllItems();
             m_clients.clear();
@@ -166,7 +161,7 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
             break;
 
         default:
-            wxLogMessage("Unknown socket event!!!");
+            wxLogMessage(wxT("Неизвестное событие"));
             break;
     }
 
@@ -217,8 +212,11 @@ void MyFrame::RecList()
         m_sock->Read(c3, len3);       
         wxString wS3(c3);
 
-        client newClient(wS1, wS2, wS3);
-        m_clients.insert(newClient);
+        if(wS3 != GetPort())
+        {
+            client newClient(wS1, wS2, wS3);
+            m_clients.insert(newClient);
+        }
 
     }
 }
@@ -231,7 +229,6 @@ void MyFrame::OpenDialog(wxListEvent& event)
         if(i->GetAddr() == m_listCtrl->GetItemText(event.GetIndex(), 1) && i->GetPort() == m_listCtrl->GetItemText(event.GetIndex(), 2))
         {
             mD = i;
-            //wxLogMessage(wxT("есть такой диалог"));
             break;   
         }
     }
@@ -242,12 +239,6 @@ void MyFrame::OpenDialog(wxListEvent& event)
     }
     mD->Show(true);
 
-    
-    /*
-    MyDialog* myDial = new MyDialog(m_Panel, m_listCtrl->GetItemText(event.GetIndex(), 0), m_listCtrl->GetItemText(event.GetIndex(), 1), m_listCtrl->GetItemText(event.GetIndex(), 2));
-    myDial->Show(true);
-    m_vecDial.push_back(myDial);
-    */
 }
 
 wxSocketClient* MyFrame::GetSocket()
@@ -255,11 +246,18 @@ wxSocketClient* MyFrame::GetSocket()
     return m_sock;
 }
 
+wxString MyFrame::GetAddr()
+{
+    return m_addr.IPAddress();
+}
+
+wxString MyFrame::GetPort()
+{
+    return wxString::Format(wxT("%d"), m_addr.Service());
+}
+
 void MyFrame::GetMsg()
 {
-    //m_sock->SetFlags(wxSOCKET_NOWAIT);
-
-    //m_sock->WaitForRead(3);
 if(m_sock->IsData() || (!(m_sock->IsData()) && m_sock->WaitForRead()))
 {
     unsigned char len1;
@@ -307,28 +305,6 @@ if(m_sock->IsData() || (!(m_sock->IsData()) && m_sock->WaitForRead()))
         default: break;
     }
 
-   
-//    unsigned char len3;
-//    m_sock->Read(&len3, 1);
-//    wxString wS3;
-      /*if(len3 < 128){
-        char c3[len3];
-        m_sock->Read(c3, len3);
-        wxString wS4(c3);
-        wS3 = wS4;
-      }
-      else
-      {*/
-//        wxCharBuffer buf(len3 * 1024);
-//        m_sock->Read(buf.data(), len3 * 1024);
-//        wxString wS4(buf.data());
-//        wS3 = wS4;
-        
-      //}
-
-    //m_text1->AppendText(wS3 + "\n");
-    //wxLogMessage(wxT("Все норм"));
-
     MyDialog* mD = nullptr;
     for(MyDialog* i : m_vecDial)
     {
@@ -350,14 +326,10 @@ if(m_sock->IsData() || (!(m_sock->IsData()) && m_sock->WaitForRead()))
     mD->m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
     mD->m_text1->AppendText(wS3 + "\n\n");
 
-    //m_sock->Write(c1, len1);
-    //m_sock->Write(c2, len2);
     unsigned char v;
     if(m_sock->Error())
     {
-        //m_sock->Discard();
         v = 0xAB;
-        //m_sock->WaitForWrite(1);
     }
     else
     {
@@ -373,7 +345,6 @@ else
 }
 
 m_sock->Discard();
-    //mD->m_text2->SetFocus();
 }
 
 
@@ -391,31 +362,5 @@ void MyFrame::NoAnswer()
     m_sock->Read(c2, len2);
     wxString wS2(c2);
     
-
-
-            wxLogMessage(wxT("Клиент  | %s | %s не отвечает"), wS1, wS2);
-
-
-
+    wxLogMessage(wxT("Клиент  | %s | %s не отвечает"), wS1, wS2);
 }
-
-/*
-void MyFrame::CloseDialog(wxCloseEvent& event)
-{
-    //MyDialog* mD = nullptr;
-    MyDialog* mD = (MyDialog*) event.GetEventObject();
-    wxLogMessage(wxT("1диалог удален?"));
-    for (unsigned int i = 0; i < m_vecDial.size(); ++i)
-    {
-        if(mD == m_vecDial.at(i))
-        {
-            m_vecDial.erase(m_vecDial.begin() + i);
-            break;
-        }
-    }
-
-    mD->Destroy();
-    wxLogMessage(wxT("2диалог удален?"));
-
-}
-*/

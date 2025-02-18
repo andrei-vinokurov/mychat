@@ -13,17 +13,25 @@
 #include "MyDialog.h"
 #include "client.h"
 
+#if wxUSE_IPV6
+    typedef wxIPV6address IPaddress;
+#else
+    typedef wxIPV4address IPaddress;
+#endif
 
 class MyFrame : public wxFrame
 {
 public:
     MyFrame();
     wxSocketClient* GetSocket();
+    wxString GetAddr();
+    wxString GetPort();
     std::vector <MyDialog*> m_vecDial;
     //MyPanel* m_myPanel; //окно класса MyPanel, где расположены основные объекты
     
 private:
     wxSocketClient* m_sock;
+    IPaddress m_addr;
     wxListCtrl* m_listCtrl;
     std::set <client> m_clients;
     wxPanel* m_Panel;
@@ -52,8 +60,6 @@ private:
     void GetMsg();
 
     void NoAnswer();
-
-    //void CloseDialog(wxCloseEvent& event);
 
 };
 
