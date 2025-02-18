@@ -24,14 +24,12 @@ class MyFrame : public wxFrame
 public:
     MyFrame();
     wxSocketClient* GetSocket();
-    wxString GetAddr();
-    wxString GetPort();
     std::vector <MyDialog*> m_vecDial;
     //MyPanel* m_myPanel; //окно класса MyPanel, где расположены основные объекты
     
 private:
     wxSocketClient* m_sock;
-    IPaddress m_addr;
+    IPaddress m_addr; //локальный адрес
     wxListCtrl* m_listCtrl;
     std::set <client> m_clients;
     wxPanel* m_Panel;

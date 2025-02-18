@@ -110,7 +110,7 @@ void MyFrame::OpenConnection(wxSockAddress::Family family)
 //    wxLogMessage("Trying to connect to %s:%d", hostname, addr->Service());
 
     m_sock->Connect(*addr, false);
-    GetSocket()->GetPeer(m_addr);
+    m_sock->GetLocal(m_addr);
 }
 
 void MyFrame::OnSocketEvent(wxSocketEvent& event)
@@ -212,7 +212,7 @@ void MyFrame::RecList()
         m_sock->Read(c3, len3);       
         wxString wS3(c3);
 
-        if(wS3 != GetPort())
+        if(wxString::Format(wxT("%d"), m_addr.Service()) != wS3)
         {
             client newClient(wS1, wS2, wS3);
             m_clients.insert(newClient);
@@ -244,16 +244,6 @@ void MyFrame::OpenDialog(wxListEvent& event)
 wxSocketClient* MyFrame::GetSocket()
 {
     return m_sock;
-}
-
-wxString MyFrame::GetAddr()
-{
-    return m_addr.IPAddress();
-}
-
-wxString MyFrame::GetPort()
-{
-    return wxString::Format(wxT("%d"), m_addr.Service());
 }
 
 void MyFrame::GetMsg()
