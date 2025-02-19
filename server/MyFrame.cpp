@@ -113,7 +113,9 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
       sock->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_LOST_FLAG);
       sock->Notify(true);
 
-      client newClient (wxString::FromUTF8("noname"), addr.IPAddress(), wxString::Format(wxT("%d"), addr.Service()), sock);
+      
+
+      client newClient (wxString::FromUTF8(addr.Hostname()), addr.IPAddress(), wxString::Format(wxT("%d"), addr.Service()), sock);
       m_mapClients.emplace(wxString::Format(wxT("%d"), addr.Service()), newClient);
       
       UpdateList();

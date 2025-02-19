@@ -2,7 +2,6 @@
 #include <wx/intl.h> //файл wx для wxLocale (для кириллицы)
 //подключение заголовочных файлов приложения
 #include "MyFrame.h"
-//#include "MyPanel.h"
 #include "MyDialog.h"
 
 

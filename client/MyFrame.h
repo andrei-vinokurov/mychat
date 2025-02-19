@@ -9,7 +9,6 @@
 #include <wx/log.h>
 #include <set>
 #include <vector>
-//#include "MyPanel.h"
 #include "MyDialog.h"
 #include "client.h"
 
@@ -25,8 +24,6 @@ public:
     MyFrame();
     wxSocketClient* GetSocket();
     std::vector <MyDialog*> m_vecDial;
-    //MyPanel* m_myPanel; //окно класса MyPanel, где расположены основные объекты
-    
 private:
     wxSocketClient* m_sock;
     IPaddress m_addr; //локальный адрес

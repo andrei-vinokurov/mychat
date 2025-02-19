@@ -19,8 +19,6 @@ MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, wxT("Чат"), wxDefaultPosition
     menuBar->Append(menuHelp, wxT("Помощь")); //добавление пункта в панель Меню
     SetMenuBar( menuBar ); //установка панели Меню в окно
     m_Panel = new wxPanel(this, wxID_ANY, wxPoint (0,0), wxSize (500, 600));
-    //wxPanel* panel = new wxPanel(this, wxID_ANY, wxPoint (0,0), wxSize (0,0));
-    //m_myPanel = new MyPanel(panel);
     CreateStatusBar(); //информационная панель
     SetStatusText(wxT("Добро пожаловать в Чат!")); //сообщение в информационной панели
 
@@ -39,9 +37,7 @@ MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, wxT("Чат"), wxDefaultPosition
 #endif
     Bind(wxEVT_MENU, &MyFrame::OnCloseConnection, this, CLIENT_CLOSE);
     Bind(wxEVT_SOCKET, &MyFrame::OnSocketEvent, this, SOCKET_ID);
-    Bind(wxEVT_LIST_ITEM_ACTIVATED, &MyFrame::OpenDialog, this, LIST_ID);
-    //Bind(wxEVT_CLOSE_WINDOW, &MyFrame::CloseDialog, this);
-    
+    Bind(wxEVT_LIST_ITEM_ACTIVATED, &MyFrame::OpenDialog, this, LIST_ID); 
 
     //создаем сокет
     m_sock = new wxSocketClient();
@@ -86,7 +82,7 @@ void MyFrame::OnOpenConnectionIPv6(wxCommandEvent& event)
 
 void MyFrame::OpenConnection(wxSockAddress::Family family)
 {
-    wxUnusedVar(family); // unused in !wxUSE_IPV6 case
+    wxUnusedVar(family);
 
     wxIPaddress* addr;
     wxIPV4address addr4;
@@ -108,9 +104,9 @@ void MyFrame::OpenConnection(wxSockAddress::Family family)
     addr->Service(3000);
 
 //    wxLogMessage("Trying to connect to %s:%d", hostname, addr->Service());
-
     m_sock->Connect(*addr, false);
     m_sock->GetLocal(m_addr);
+
 }
 
 void MyFrame::OnSocketEvent(wxSocketEvent& event)
@@ -241,10 +237,12 @@ void MyFrame::OpenDialog(wxListEvent& event)
 
 }
 
+
 wxSocketClient* MyFrame::GetSocket()
 {
     return m_sock;
 }
+
 
 void MyFrame::GetMsg()
 {
