@@ -39,6 +39,8 @@ void MyDialog::SendText(wxCommandEvent& event)
     {
     m_waitButton = true;
     MyFrame* frameFromDialog = (MyFrame*) m_parent->GetParent();
+    unsigned char a = 0x02;
+    frameFromDialog->GetSocket()->Write(&a, 1);
 
     if(m_text2->GetValue() != "" && frameFromDialog->GetSocket()->IsOk())
     {
@@ -80,14 +82,14 @@ void MyDialog::SendText(wxCommandEvent& event)
         unsigned int len3 = m_text2->GetValue().mb_str(wxConvLibc).length() + 1;
         if(len3 > 255)
         {
-            unsigned char a = 0xEE;
-            frameFromDialog->GetSocket()->Write(&a, 1);
+            unsigned char b = 0xEE;
+            frameFromDialog->GetSocket()->Write(&b, 1);
             frameFromDialog->GetSocket()->WriteMsg(m_text2->GetValue().mb_str(wxConvLibc), len3);
         }
         else
         {
-            unsigned char a = 0xFE;
-            frameFromDialog->GetSocket()->Write(&a, 1);
+            unsigned char b = 0xFE;
+            frameFromDialog->GetSocket()->Write(&b, 1);
             const char* c3 = m_text2->GetValue().mb_str(wxConvLibc);
             //unsigned char len3 = (unsigned char) a;
             frameFromDialog->GetSocket()->Write(&len3, 1);

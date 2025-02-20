@@ -113,12 +113,24 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
       sock->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_LOST_FLAG);
       sock->Notify(true);
 
+      wxLogMessage("Yes1");
+      char buf[128];
+      wxLogMessage("Yes1-1");
+      sock->ReadMsg(buf, sizeof(buf));
+      wxLogMessage("Yes1-2");
+      wxString name1(buf);
+      wxLogMessage("Yes1-3");
       
 
-      client newClient (wxString::FromUTF8(addr.Hostname()), addr.IPAddress(), wxString::Format(wxT("%d"), addr.Service()), sock);
+
+      wxLogMessage("Yes2");
+      client newClient (name1, addr.IPAddress(), wxString::Format(wxT("%d"), addr.Service()), sock);
       m_mapClients.emplace(wxString::Format(wxT("%d"), addr.Service()), newClient);
       
+      wxLogMessage("Yes3");    
       UpdateList();
+
+      
     }
   }
   else
@@ -149,58 +161,82 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
   {
     case wxSOCKET_INPUT:
     {
-
+      wxLogMessage("Yes1");
       sock->SetNotify(wxSOCKET_LOST_FLAG);
 
       unsigned char err = 0;
 
       if(sock->IsData() || (!(sock->IsData()) && sock->WaitForRead()))
       {
-
-        unsigned char len1;
-        sock->Read(&len1, 1);
-        char c1[len1];
-        sock->Read(c1, len1);
-        wxString wS1(c1);
-
-        unsigned char len2;
-        sock->Read(&len2, 1);
-        char c2[len2];
-        sock->Read(c2, len2);
-        wxString wS2(c2);
-        
-        wxString wS3;
-
-        unsigned char a;
-        sock->Read(&a, 1);
-        unsigned int len3;
-        
-        switch(a)
+        wxLogMessage("Yes2");
+      unsigned char a;
+      sock->Read(&a, 1);
+      switch(a)
+      {
+        case 0x01:
         {
-          case 0xEE:
-          {
-          char buf[4096];
-          wxUint32 len4 = sock->ReadMsg(buf, sizeof(buf)).LastCount();
-          wxString wS4(buf);
-          wS3 = wS4;
-          len3 = len4;
+          
+          char buf[128];
+          sock->ReadMsg(buf, sizeof(buf));
+          wxString name1(buf);
+
+          client newClient (name1, addr.IPAddress(), wxString::Format(wxT("%d"), addr.Service()), sock);
+          m_mapClients.emplace(wxString::Format(wxT("%d"), addr.Service()), newClient);
+          
+          UpdateList();
+            
           break;
-          }
-      
-          case 0xFE:
+        }
+
+        case 0x02:
+        {
+
+          unsigned char len1;
+          sock->Read(&len1, 1);
+          char c1[len1];
+          sock->Read(c1, len1);
+          wxString wS1(c1);
+
+          unsigned char len2;
+          sock->Read(&len2, 1);
+          char c2[len2];
+          sock->Read(c2, len2);
+          wxString wS2(c2);
+          
+          wxString wS3;
+
+          unsigned char b;
+          sock->Read(&b, 1);
+          unsigned int len3;
+          
+          switch(b)
           {
-          unsigned char len5;
-          sock->Read(&len5, 1);
-          char c3[len5];
-          sock->Read(c3, len5);
-          wxString wS5(c3);
-          wS3 = wS5;
-          len3 = len5;
-          break;
+            case 0xEE:
+            {
+            char buf[4096];
+            wxUint32 len4 = sock->ReadMsg(buf, sizeof(buf)).LastCount();
+            wxString wS4(buf);
+            wS3 = wS4;
+            len3 = len4;
+            break;
+            }
+        
+            case 0xFE:
+            {
+            unsigned char len5;
+            sock->Read(&len5, 1);
+            char c3[len5];
+            sock->Read(c3, len5);
+            wxString wS5(c3);
+            wS3 = wS5;
+            len3 = len5;
+            break;
+            }
+
+            default: break;
           }
 
-          default: break;
-        }
+    
 
   ////////////////////////////////////
         if(sock->Error())
@@ -325,6 +361,10 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
             sock->Write(&len2, 1);
             sock->Write(c2, len2);
         }
+        break;
+        }
+      default: {wxLogMessage("Yes_default"); break;}
+      }
       }
 
     label:
@@ -332,7 +372,9 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
       sock->Discard();
       sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
       break;
-    }
+
+  }
+
 
     case wxSOCKET_LOST:
     {

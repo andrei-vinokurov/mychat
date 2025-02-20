@@ -106,6 +106,7 @@ void MyFrame::OpenConnection(wxSockAddress::Family family)
 //    wxLogMessage("Trying to connect to %s:%d", hostname, addr->Service());
     m_sock->Connect(*addr, false);
     m_sock->GetLocal(m_addr);
+    
 
 }
 
@@ -152,9 +153,15 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
             break;
 
         case wxSOCKET_CONNECTION:
+        {
 //          wxLogMessage("... socket is now connected.");
+            unsigned char a = 0x01;
+            m_sock->Write(&a, 1);
+            wxString name1 = "Andrew";
+            m_sock->WriteMsg(name1.mb_str(wxConvLibc), (name1.mb_str(wxConvLibc).length() + 1));
 
             break;
+        }
 
         default:
             wxLogMessage(wxT("Неизвестное событие"));
