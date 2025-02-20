@@ -130,7 +130,8 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
       wxLogMessage("Yes3");    
       UpdateList();
 
-      
+      sock->Discard();
+
     }
   }
   else
