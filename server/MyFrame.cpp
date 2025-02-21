@@ -113,21 +113,13 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
       sock->SetNotify(wxSOCKET_INPUT_FLAG | wxSOCKET_LOST_FLAG);
       sock->Notify(true);
 
-      wxLogMessage("Yes1");
       char buf[128];
-      wxLogMessage("Yes1-1");
       sock->ReadMsg(buf, sizeof(buf));
-      wxLogMessage("Yes1-2");
-      wxString name1(buf);
-      wxLogMessage("Yes1-3");
-      
+      wxString name(buf);
 
-
-      wxLogMessage("Yes2");
-      client newClient (name1, addr.IPAddress(), wxString::Format(wxT("%d"), addr.Service()), sock);
+      client newClient (name, addr.IPAddress(), wxString::Format(wxT("%d"), addr.Service()), sock);
       m_mapClients.emplace(wxString::Format(wxT("%d"), addr.Service()), newClient);
       
-      wxLogMessage("Yes3");    
       UpdateList();
 
       sock->Discard();
@@ -162,36 +154,10 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
   {
     case wxSOCKET_INPUT:
     {
-      wxLogMessage("Yes1");
       sock->SetNotify(wxSOCKET_LOST_FLAG);
-
       unsigned char err = 0;
-
       if(sock->IsData() || (!(sock->IsData()) && sock->WaitForRead()))
       {
-        wxLogMessage("Yes2");
-      unsigned char a;
-      sock->Read(&a, 1);
-      switch(a)
-      {
-        case 0x01:
-        {
-          
-          char buf[128];
-          sock->ReadMsg(buf, sizeof(buf));
-          wxString name1(buf);
-
-          client newClient (name1, addr.IPAddress(), wxString::Format(wxT("%d"), addr.Service()), sock);
-          m_mapClients.emplace(wxString::Format(wxT("%d"), addr.Service()), newClient);
-          
-          UpdateList();
-            
-          break;
-        }
-
-        case 0x02:
-        {
-
           unsigned char len1;
           sock->Read(&len1, 1);
           char c1[len1];
@@ -206,11 +172,11 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
           
           wxString wS3;
 
-          unsigned char b;
-          sock->Read(&b, 1);
+          unsigned char a;
+          sock->Read(&a, 1);
           unsigned int len3;
           
-          switch(b)
+          switch(a)
           {
             case 0xEE:
             {
@@ -362,19 +328,17 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
             sock->Write(&len2, 1);
             sock->Write(c2, len2);
         }
+
+        
+      }
+
+      label:
+        if(err == 0xAB) sock->Write(&err, 1);
+        sock->Discard();
+        sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
         break;
-        }
-      default: {wxLogMessage("Yes_default"); break;}
-      }
-      }
 
-    label:
-      if(err == 0xAB) sock->Write(&err, 1);
-      sock->Discard();
-      sock->SetNotify(wxSOCKET_LOST_FLAG | wxSOCKET_INPUT_FLAG);
-      break;
-
-  }
+    }
 
 
     case wxSOCKET_LOST:

@@ -106,9 +106,9 @@ void MyFrame::OpenConnection(wxSockAddress::Family family)
 //    wxLogMessage("Trying to connect to %s:%d", hostname, addr->Service());
     m_sock->Connect(*addr, false);
     m_sock->GetLocal(m_addr);
-    
 
 }
+
 
 void MyFrame::OnSocketEvent(wxSocketEvent& event)
 {
@@ -147,7 +147,7 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
         case wxSOCKET_LOST:
             wxLogMessage(wxT("Соединение было потеряно"));
 
-            m_listCtrl->DeleteAllItems();
+            m_listCtrl->DeleteAllItems();     
             m_clients.clear();
 
             break;
@@ -155,10 +155,13 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
         case wxSOCKET_CONNECTION:
         {
 //          wxLogMessage("... socket is now connected.");
-            //unsigned char a = 0x01;
-            //m_sock->Write(&a, 1);
-            wxString name1 = "Andrew";
-            m_sock->WriteMsg(name1.mb_str(wxConvLibc), (name1.mb_str(wxConvLibc).length() + 1));
+
+            m_name = wxGetTextFromUser(
+                wxT("Укажите Ваше имя в чате"),
+                wxT("Получение имени"),
+                "");
+
+            m_sock->WriteMsg(m_name.mb_str(wxConvLibc), (m_name.mb_str(wxConvLibc).length() + 1));
 
             break;
         }
@@ -170,10 +173,11 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
 
 }
 
+
 void MyFrame::OnCloseConnection(wxCommandEvent& event)
 {
   m_sock->Close();
-  m_listCtrl->DeleteAllItems();
+  m_listCtrl->DeleteAllItems();     
   m_clients.clear();
 }
 
@@ -191,7 +195,7 @@ void MyFrame::UpdateList()
 }
 
 void MyFrame::RecList()
-{
+{      
     m_clients.clear();
     unsigned char len;
     m_sock->Read(&len, 1);
@@ -223,6 +227,7 @@ void MyFrame::RecList()
 
     }
 }
+
 
 void MyFrame::OpenDialog(wxListEvent& event)
 {
@@ -312,7 +317,16 @@ if(m_sock->IsData() || (!(m_sock->IsData()) && m_sock->WaitForRead()))
     }
     if(!mD)
     {
-        mD = new MyDialog(m_Panel, "noname", wS1, wS2);
+        wxString nameDialog = "noname";
+        for(client c : m_clients)
+        {
+            if(c.GetAddress() == wS1 && c.GetPort() == wS2) 
+            {
+                nameDialog = c.GetName();
+                break;
+            }
+        }
+        mD = new MyDialog(m_Panel, nameDialog, wS1, wS2);
         m_vecDial.push_back(mD);
     }
     mD->Show(true);
@@ -358,4 +372,9 @@ void MyFrame::NoAnswer()
     wxString wS2(c2);
     
     wxLogMessage(wxT("Клиент  | %s | %s не отвечает"), wS1, wS2);
+}
+
+wxString MyFrame::GetName()
+{
+    return m_name;
 }

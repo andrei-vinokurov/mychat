@@ -8,6 +8,7 @@
 #include <wx/listctrl.h>
 #include <wx/log.h>
 #include <set>
+#include <map>
 #include <vector>
 #include "MyDialog.h"
 #include "client.h"
@@ -23,9 +24,11 @@ class MyFrame : public wxFrame
 public:
     MyFrame();
     wxSocketClient* GetSocket();
+    wxString GetName();
     std::vector <MyDialog*> m_vecDial;
 private:
     wxSocketClient* m_sock;
+    wxString m_name;
     IPaddress m_addr; //локальный адрес
     wxListCtrl* m_listCtrl;
     std::set <client> m_clients;
