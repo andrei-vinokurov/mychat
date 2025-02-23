@@ -2,6 +2,7 @@
 
 MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, wxT("Чат_СЕРВЕР"), wxDefaultPosition, wxSize(500, 500))
 {
+    SetIcon (wxICON(icon_frame));  //подключаем логотип через файл res.h
     wxMenu* menuFile = new wxMenu; //меню "Файл"
     menuFile->Append(wxID_EXIT, wxT("Выход"), wxT("Выйти из программы"));
     wxMenu* menuHelp = new wxMenu; //меню "Помощь"
@@ -117,8 +118,9 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
       sock->ReadMsg(buf, sizeof(buf));
       wxString name(buf);
 
+      wxString wS = addr.IPAddress() + wxString::Format(wxT("%d"), addr.Service());
       client newClient (name, addr.IPAddress(), wxString::Format(wxT("%d"), addr.Service()), sock);
-      m_mapClients.emplace(wxString::Format(wxT("%d"), addr.Service()), newClient);
+      m_mapClients.emplace(wS, newClient);
       
       UpdateList();
 
@@ -216,10 +218,10 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
         
   //      wxLogMessage("|| %s | %s | %s", wS1, wS2, wS3); //для проверки
 
-
-        if(m_mapClients.find(wS2) != m_mapClients.end())
+        wxString wSfind = wS1 + wS2;
+        if(m_mapClients.find(wSfind) != m_mapClients.end())
         {
-            client* cl = &m_mapClients.find(wS2)->second;
+            client* cl = &m_mapClients.find(wSfind)->second;
 
             unsigned char c = 0xCE;
             cl->GetSock()->Write(&c, 1);
@@ -315,8 +317,8 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
 
         else
         {
-            unsigned char c = 0xDE;
-            sock->Write(&c, 1);
+            unsigned char v = 0xAC;
+            sock->Write(&v, 1);
 
             const char* c1 = wS1;
             unsigned char len1 = (unsigned char)(wxStrlen(c1) + 1);
@@ -343,7 +345,8 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
 
     case wxSOCKET_LOST:
     {
-      if(auto search = m_mapClients.find(wxString::Format(wxT("%d"), addr.Service())); search != m_mapClients.end())
+      wxString wSfind = addr.IPAddress() + wxString::Format(wxT("%d"), addr.Service());
+      if(auto search = m_mapClients.find(wSfind); search != m_mapClients.end())
       {
         m_mapClients.erase(search);
       }
@@ -355,10 +358,11 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
       break;
     }
 
-    default: ;
+    default: break;
   }
 
 }
+
 
 void MyFrame::UpdateList()
 {

@@ -3,11 +3,12 @@
 //конструктор основного окна
 MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, wxT("Чат"), wxDefaultPosition, wxSize(500, 500))
 {
+    SetIcon (wxICON(icon_frame));  //подключаем логотип через файл res.h
     wxMenu* menuFile = new wxMenu; //меню "Файл"
     menuFile->Append(CLIENT_OPEN, wxT("Подключение"), wxT("Подключиться к чату(IPV4)"));
-#if wxUSE_IPV6
-    menuFile->Append(CLIENT_OPENIPV6, wxT("Подключение (IPV6)"), wxT("Подключиться к чату(IPV6)"));
-#endif
+//#if wxUSE_IPV6
+//    menuFile->Append(CLIENT_OPENIPV6, wxT("Подключение (IPV6)"), wxT("Подключиться к чату(IPV6)"));
+//#endif
     menuFile->AppendSeparator();
     menuFile->Append(CLIENT_CLOSE, wxT("Отключение"), wxT("Отключиться от чата"));
     menuFile->AppendSeparator();
@@ -103,7 +104,6 @@ void MyFrame::OpenConnection(wxSockAddress::Family family)
     addr->Hostname(hostname);
     addr->Service(3000);
 
-//    wxLogMessage("Trying to connect to %s:%d", hostname, addr->Service());
     m_sock->Connect(*addr, false);
     m_sock->GetLocal(m_addr);
 
@@ -117,7 +117,6 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
     {
         case wxSOCKET_INPUT:
         {
-//            wxLogMessage("Input available on the socket");
             unsigned char c;
             m_sock->Read(&c, 1);
 
@@ -154,8 +153,6 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
 
         case wxSOCKET_CONNECTION:
         {
-//          wxLogMessage("... socket is now connected.");
-
             m_name = wxGetTextFromUser(
                 wxT("Укажите Ваше имя в чате"),
                 wxT("Получение имени"),
@@ -219,7 +216,7 @@ void MyFrame::RecList()
         m_sock->Read(c3, len3);       
         wxString wS3(c3);
 
-        if(wxString::Format(wxT("%d"), m_addr.Service()) != wS3)
+        if(m_addr.IPAddress() != wS2 || wxString::Format(wxT("%d"),m_addr.Service()) != wS3)
         {
             client newClient(wS1, wS2, wS3);
             m_clients.insert(newClient);
@@ -311,7 +308,6 @@ if(m_sock->IsData() || (!(m_sock->IsData()) && m_sock->WaitForRead()))
         if(i->GetAddr() == wS1 && i->GetPort() == wS2)
         {
             mD = i;
-            //wxLogMessage(wxT("есть такой диалог"));
             break;   
         }
     }
@@ -331,7 +327,7 @@ if(m_sock->IsData() || (!(m_sock->IsData()) && m_sock->WaitForRead()))
     }
     mD->Show(true);
     mD->m_text1->SetDefaultStyle(wxTextAttr(*wxBLUE));
-    mD->m_text1->AppendText(wxNow() + " " + mD->GetName() + "\n"); //wxDateTime::GetHour().FormatISOTime());
+    mD->m_text1->AppendText(wxNow() + " " + mD->GetName() + "\n");
     mD->m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
     mD->m_text1->AppendText(wS3 + "\n\n");
 

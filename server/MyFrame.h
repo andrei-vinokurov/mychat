@@ -11,14 +11,16 @@
 #include <wx/utils.h> 
 #include <map>
 #include "client.h"
+#include "res.h"
 
-// В настоящее время этот пример написан для использования сокетов только IP или только IPv6
+// В настоящее время этот пример написан для использования сокетов только IPv4 или только IPv6
 // В будущем его следует расширить, чтобы разрешить использование любого из них
-#if wxUSE_IPV6
-    typedef wxIPV6address IPaddress;
-#else
+
+//#if wxUSE_IPV6
+//    typedef wxIPV6address IPaddress;
+//#else
     typedef wxIPV4address IPaddress;
-#endif
+//#endif
 
 
 class MyFrame : public wxFrame

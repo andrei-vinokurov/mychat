@@ -106,7 +106,6 @@ void MyDialog::SendText(wxCommandEvent& event)
 
 ////////////////////////////////////////
         
-        //frameFromDialog->GetSocket()->WaitForRead(2);
         unsigned char v = 0;
         frameFromDialog->GetSocket()->Read(&v, 1);
 
@@ -122,7 +121,7 @@ void MyDialog::SendText(wxCommandEvent& event)
             if(v == 0xAA)
             {
                 m_text1->SetDefaultStyle(wxTextAttr(*wxRED));
-                m_text1->AppendText(wxNow() + wxT(" (Вы)")  + "\n"); //wxDateTime::GetHour().FormatISOTime());
+                m_text1->AppendText(wxNow() + wxT(" (Вы)")  + "\n");
                 m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
                 m_text1->AppendText(m_text2->GetValue() + "\n");
 
@@ -136,6 +135,12 @@ void MyDialog::SendText(wxCommandEvent& event)
             {
                 m_text1->SetDefaultStyle(wxTextAttr(*wxCYAN));
                 m_text1->AppendText(wxT("Статус доставки сообщения неизвестен.\n\n"));
+                m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
+            }
+            if(v == 0xAC)
+            {
+                m_text1->SetDefaultStyle(wxTextAttr(*wxRED));
+                m_text1->AppendText(wxT("Собеседник не отвечает на запросы, возможно он отключился.\n\n"));
                 m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
             }
         }

@@ -12,12 +12,13 @@
 #include <vector>
 #include "MyDialog.h"
 #include "client.h"
+#include "res.h"
 
-#if wxUSE_IPV6
-    typedef wxIPV6address IPaddress;
-#else
+//#if wxUSE_IPV6
+//    typedef wxIPV6address IPaddress;
+//#else
     typedef wxIPV4address IPaddress;
-#endif
+//#endif
 
 class MyFrame : public wxFrame
 {
