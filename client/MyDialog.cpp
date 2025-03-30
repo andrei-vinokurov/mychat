@@ -38,6 +38,7 @@ void MyDialog::SendText(wxCommandEvent& event)
     if(!m_waitButton)
     {
     m_waitButton = true;
+    bool err = false;
     MyFrame* frameFromDialog = (MyFrame*) m_parent->GetParent();
 
     if(m_text2->GetValue() != "" && frameFromDialog->GetSocket()->IsOk())
@@ -54,9 +55,8 @@ void MyDialog::SendText(wxCommandEvent& event)
 
         if(frameFromDialog->GetSocket()->Error())
         {
-            m_text1->SetDefaultStyle(wxTextAttr(*wxCYAN));
-            m_text1->AppendText(wxT("Сообщение не отправлено! Повторите попытку.\n\n"));
-            m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
+            err = true;
+            goto label;
         }
 
 ////////////////////////////////////////
@@ -70,9 +70,8 @@ void MyDialog::SendText(wxCommandEvent& event)
 
         if(frameFromDialog->GetSocket()->Error())
         {
-            m_text1->SetDefaultStyle(wxTextAttr(*wxCYAN));
-            m_text1->AppendText(wxT("Сообщение не отправлено! Повторите попытку.\n\n"));
-            m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
+            err = true;
+            goto label;
         }
 
 ////////////////////////////////////////
@@ -99,9 +98,8 @@ void MyDialog::SendText(wxCommandEvent& event)
 
         if(frameFromDialog->GetSocket()->Error())
         {
-            m_text1->SetDefaultStyle(wxTextAttr(*wxCYAN));
-            m_text1->AppendText(wxT("Сообщение не отправлено! Повторите попытку.\n\n"));
-            m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
+            err = true;
+            goto label;
         }
 
 ////////////////////////////////////////
@@ -145,9 +143,18 @@ void MyDialog::SendText(wxCommandEvent& event)
             }
         }
 
-            frameFromDialog->GetSocket()->Discard();
+            
     
     }
+
+    label:
+    if(err)
+    {
+        m_text1->SetDefaultStyle(wxTextAttr(*wxCYAN));
+        m_text1->AppendText(wxT("Сообщение не отправлено! Повторите попытку.\n\n"));
+        m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
+    }
+    frameFromDialog->GetSocket()->Discard();
 
     wxMicroSleep(300000);
 

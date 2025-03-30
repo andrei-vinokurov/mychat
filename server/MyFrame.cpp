@@ -142,7 +142,7 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
   wxSocketBase* sock = event.GetSocket();
   IPaddress addr;
   sock->GetPeer(addr);
-  sock->SetTimeout(5);
+  //sock->SetTimeout(10);
 /*
   switch(event.GetSocketEvent())
   {
@@ -208,12 +208,14 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
     
 
   ////////////////////////////////////
+      /*
         if(sock->Error())
         {
           wxLogMessage("Error1");
           err = 0xAB;
           goto label;
         }
+      */
   ///////////////////////////////////
         
   //      wxLogMessage("|| %s | %s | %s", wS1, wS2, wS3); //для проверки
@@ -352,7 +354,7 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
       }
       
       UpdateList();
-
+      sock->Discard();
       wxLogMessage(wxT("Клиент отключился"));
       sock->Destroy();
       break;

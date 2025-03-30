@@ -58,7 +58,7 @@ private:
 
     void GetMsg();
 
-    void NoAnswer();
+//    void NoAnswer();
 
 };
 

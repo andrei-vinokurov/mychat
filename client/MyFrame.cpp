@@ -49,7 +49,7 @@ MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, wxT("Чат"), wxDefaultPosition
                     wxSOCKET_INPUT_FLAG |
                     wxSOCKET_LOST_FLAG);
     m_sock->Notify(true);
-    m_sock->SetTimeout(5);
+    //m_sock->SetTimeout(10);
 
 }
 
@@ -105,7 +105,9 @@ void MyFrame::OpenConnection(wxSockAddress::Family family)
     addr->Service(3000);
 
     m_sock->Connect(*addr, false);
+    wxMicroSleep(1000);   
     m_sock->GetLocal(m_addr);
+    //wxLogMessage(m_addr.IPAddress() + " : " + wxString::Format(wxT("%d"),m_addr.Service()));
 
 }
 
@@ -132,20 +134,21 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
                     GetMsg(); 
                     break;
                 }
+                /*
                 case 0xDE:
                 {
                     NoAnswer(); 
                     break;
                 }
+                */
                 default:
-                wxLogMessage(wxT("Получено неизвестное сообщение"));
+                //wxLogMessage(wxT("Получено неизвестное сообщение"));
                 break;
             }
             break;
         }
-        case wxSOCKET_LOST:
+        case wxSOCKET_LOST:    
             wxLogMessage(wxT("Соединение было потеряно"));
-
             m_listCtrl->DeleteAllItems();     
             m_clients.clear();
 
@@ -223,6 +226,8 @@ void MyFrame::RecList()
         }
 
     }
+    
+    m_sock->Discard();
 }
 
 
@@ -255,8 +260,8 @@ wxSocketClient* MyFrame::GetSocket()
 
 void MyFrame::GetMsg()
 {
-if(m_sock->IsData() || (!(m_sock->IsData()) && m_sock->WaitForRead()))
-{
+//if(m_sock->IsData() || (!(m_sock->IsData()) && m_sock->WaitForRead()))
+//{
     unsigned char len1;
     m_sock->Read(&len1, 1);
     char c1[len1];
@@ -342,17 +347,17 @@ if(m_sock->IsData() || (!(m_sock->IsData()) && m_sock->WaitForRead()))
     }
     m_sock->Write(&v, 1);
 
-}
-else
+//}
+/*else
 {
     unsigned char v = 0xAB;
     m_sock->Write(&v, 1);
-}
+}*/
 
 m_sock->Discard();
 }
 
-
+/*
 void MyFrame::NoAnswer()
 {
     unsigned char len1;
@@ -369,6 +374,7 @@ void MyFrame::NoAnswer()
     
     wxLogMessage(wxT("Клиент  | %s | %s не отвечает"), wS1, wS2);
 }
+*/
 
 wxString MyFrame::GetName()
 {
