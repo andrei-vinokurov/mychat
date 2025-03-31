@@ -10,8 +10,8 @@
 class client
 {
 public:
-    client(wxString name = "", wxString address = "", wxString port = "");
-    bool operator<(const client& r) const;
+    client(wxString name = "", wxString address = "", wxString port = ""); //конструктор
+    bool operator<(const client& r) const; //переопределение оператора < для сортировки объектов client в множестве set
     wxString GetName();
     wxString GetAddress();
     wxString GetPort();

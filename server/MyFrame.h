@@ -1,3 +1,4 @@
+//класс основного окна сервера
 #ifndef MYFRAME_H
 #define MYFRAME_H
 
@@ -29,20 +30,20 @@ public:
     MyFrame();
 
 private:
-    wxSocketServer* m_server;
-    wxTextCtrl* m_text;
-    wxListCtrl* m_listCtrl;
-    std::map <wxString, client> m_mapClients;
+    wxSocketServer* m_server; //сокет
+    wxTextCtrl* m_text; //текстовая информация
+    wxListCtrl* m_listCtrl; //список клиентов
+    std::map <wxString, client> m_mapClients; //отсортированный список (словарь) клиентов
 
     void OnExit(wxCommandEvent& event); //выход
     void OnAbout(wxCommandEvent& event); //о программе
 
-    void OnServerEvent(wxSocketEvent& event);
-    void OnSocketEvent(wxSocketEvent& event);
+    void OnServerEvent(wxSocketEvent& event); //функция отслеживает новые подключения
+    void OnSocketEvent(wxSocketEvent& event); //события сокета
 
-    void UpdateList();
+    void UpdateList(); //обновить список клиентов
 
-    void SendList();
+    void SendList(); //отправить клиентам список клиентов
 
 };
 

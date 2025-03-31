@@ -49,7 +49,6 @@ MyFrame::MyFrame() : wxFrame(nullptr, wxID_ANY, wxT("Чат"), wxDefaultPosition
                     wxSOCKET_INPUT_FLAG |
                     wxSOCKET_LOST_FLAG);
     m_sock->Notify(true);
-    //m_sock->SetTimeout(10);
 
 }
 
@@ -69,18 +68,21 @@ void MyFrame::OnAbout(wxCommandEvent& event)
 }
 
 
+//подключение IPv4
 void MyFrame::OnOpenConnection(wxCommandEvent& event)
 {
     OpenConnection(wxSockAddress::IPV4);
 }
+//подключение IPv6
 #if wxUSE_IPV6
 void MyFrame::OnOpenConnectionIPv6(wxCommandEvent& event)
 {
     OpenConnection(wxSockAddress::IPV6);
 }
-#endif // wxUSE_IPV6
+#endif
 
 
+//подключение к серверу
 void MyFrame::OpenConnection(wxSockAddress::Family family)
 {
     wxUnusedVar(family);
@@ -107,11 +109,11 @@ void MyFrame::OpenConnection(wxSockAddress::Family family)
     m_sock->Connect(*addr, false);
     wxMicroSleep(1000);   
     m_sock->GetLocal(m_addr);
-    //wxLogMessage(m_addr.IPAddress() + " : " + wxString::Format(wxT("%d"),m_addr.Service()));
-
+    
 }
 
 
+//отслеживания событий сокета - входящие сообщения, подключение, отключение
 void MyFrame::OnSocketEvent(wxSocketEvent& event)
 {
 
@@ -126,24 +128,16 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
             {
                 case 0xBE:
                 { 
-                    UpdateList(); 
+                    UpdateList(); //обновить список
                     break;
                 }
                 case 0xCE:
                 {
-                    GetMsg(); 
+                    GetMsg(); //получить сообщение
                     break;
                 }
-                /*
-                case 0xDE:
-                {
-                    NoAnswer(); 
-                    break;
-                }
-                */
-                default:
-                //wxLogMessage(wxT("Получено неизвестное сообщение"));
-                break;
+                
+                default: break;
             }
             break;
         }
@@ -174,6 +168,7 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
 }
 
 
+//отключение от сервера
 void MyFrame::OnCloseConnection(wxCommandEvent& event)
 {
   m_sock->Close();
@@ -181,6 +176,8 @@ void MyFrame::OnCloseConnection(wxCommandEvent& event)
   m_clients.clear();
 }
 
+
+//обновить список клиентов
 void MyFrame::UpdateList()
 {
   RecList();                                  
@@ -194,6 +191,8 @@ void MyFrame::UpdateList()
   }
 }
 
+
+//получить список клиентов
 void MyFrame::RecList()
 {      
     m_clients.clear();
@@ -231,6 +230,7 @@ void MyFrame::RecList()
 }
 
 
+//открыть диалог с клиентом
 void MyFrame::OpenDialog(wxListEvent& event)
 {
     MyDialog* mD = nullptr;
@@ -252,16 +252,16 @@ void MyFrame::OpenDialog(wxListEvent& event)
 }
 
 
+//возвращает сокет
 wxSocketClient* MyFrame::GetSocket()
 {
     return m_sock;
 }
 
 
+//получить сообщение
 void MyFrame::GetMsg()
 {
-//if(m_sock->IsData() || (!(m_sock->IsData()) && m_sock->WaitForRead()))
-//{
     unsigned char len1;
     m_sock->Read(&len1, 1);
     char c1[len1];
@@ -282,7 +282,7 @@ void MyFrame::GetMsg()
 
     switch(a)
     {
-        case 0xEE:
+        case 0xEE: //получение большого сообщения
         {
         char buf[4096];
         wxUint32 len4 = m_sock->ReadMsg(buf, sizeof(buf)).LastCount();
@@ -292,7 +292,7 @@ void MyFrame::GetMsg()
         break;
         }
     
-        case 0xFE:
+        case 0xFE: //получение небольшого сообщения
         {
         unsigned char len5;
         m_sock->Read(&len5, 1);
@@ -307,6 +307,7 @@ void MyFrame::GetMsg()
         default: break;
     }
 
+    //открытие диалогового окна при получении сообщения
     MyDialog* mD = nullptr;
     for(MyDialog* i : m_vecDial)
     {
@@ -347,35 +348,11 @@ void MyFrame::GetMsg()
     }
     m_sock->Write(&v, 1);
 
-//}
-/*else
-{
-    unsigned char v = 0xAB;
-    m_sock->Write(&v, 1);
-}*/
-
 m_sock->Discard();
 }
 
-/*
-void MyFrame::NoAnswer()
-{
-    unsigned char len1;
-    m_sock->Read(&len1, 1);
-    char c1[len1];
-    m_sock->Read(c1, len1);
-    wxString wS1(c1);
 
-    unsigned char len2;
-    m_sock->Read(&len2, 1); 
-    char c2[len2];
-    m_sock->Read(c2, len2);
-    wxString wS2(c2);
-    
-    wxLogMessage(wxT("Клиент  | %s | %s не отвечает"), wS1, wS2);
-}
-*/
-
+//возвращает имя
 wxString MyFrame::GetName()
 {
     return m_name;

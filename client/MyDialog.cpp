@@ -1,6 +1,8 @@
 #include "MyDialog.h"
 #include "MyFrame.h"
 
+
+//конструктор
 MyDialog::MyDialog(wxPanel* parent, wxString name, wxString addr, wxString port) : wxDialog(parent, wxID_ANY, name, wxDefaultPosition, wxSize(500, 600))
 {
     m_parent = parent;
@@ -17,6 +19,8 @@ MyDialog::MyDialog(wxPanel* parent, wxString name, wxString addr, wxString port)
     Bind(wxEVT_CLOSE_WINDOW, [this](wxCloseEvent&) {this->Destroy();});
 }
 
+
+//деструктор
 MyDialog::~MyDialog()
 {
 
@@ -33,6 +37,7 @@ MyDialog::~MyDialog()
 }
 
 
+//отправка текста
 void MyDialog::SendText(wxCommandEvent& event)
 {   
     if(!m_waitButton)
@@ -77,18 +82,17 @@ void MyDialog::SendText(wxCommandEvent& event)
 ////////////////////////////////////////
 
         unsigned int len3 = m_text2->GetValue().mb_str(wxConvLibc).length() + 1;
-        if(len3 > 255)
+        if(len3 > 255) //если текст большой - отправка с помощью WriteMsg
         {
             unsigned char a = 0xEE;
             frameFromDialog->GetSocket()->Write(&a, 1);
             frameFromDialog->GetSocket()->WriteMsg(m_text2->GetValue().mb_str(wxConvLibc), len3);
         }
-        else
+        else //если текст небольшой - отправка с помощью Write
         {
             unsigned char a = 0xFE;
             frameFromDialog->GetSocket()->Write(&a, 1);
             const char* c3 = m_text2->GetValue().mb_str(wxConvLibc);
-            //unsigned char len3 = (unsigned char) a;
             frameFromDialog->GetSocket()->Write(&len3, 1);
             frameFromDialog->GetSocket()->Write(c3, len3);
 
@@ -142,8 +146,6 @@ void MyDialog::SendText(wxCommandEvent& event)
                 m_text1->SetDefaultStyle(wxTextAttr(*wxBLACK));
             }
         }
-
-            
     
     }
 

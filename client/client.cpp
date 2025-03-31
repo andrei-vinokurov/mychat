@@ -1,9 +1,11 @@
 #include "client.h"
 
+//конструктор
 client::client(wxString name,  wxString address,  wxString port):
 m_Name(name), m_Address(address), m_Port(port)
 {}
 
+//переопределение оператора < для сортировки объектов client в множестве set
 bool client::operator<(const client& r) const
 {
     return (

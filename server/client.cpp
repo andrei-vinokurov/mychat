@@ -1,9 +1,11 @@
 #include "client.h"
 
+//конструктор
 client::client(wxString name,  wxString address,  wxString port, wxSocketBase* sock):
 m_Name(name), m_Address(address), m_Port(port), m_Sock(sock)
 {}
 
+//перегрузка оператора < для сортировки объектов класса при применении в map
 bool client::operator<(const client& r) const
 {
     return (

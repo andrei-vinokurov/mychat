@@ -5,7 +5,6 @@
 #include "MyDialog.h"
 
 
-
 //объявление класса приложения
 class MyApp : public wxApp
 {

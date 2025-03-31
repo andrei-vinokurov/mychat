@@ -1,3 +1,5 @@
+//класс диалог - переписка между двумя клиентами
+
 #ifndef MYDIALOG_H
 #define MYDIALOG_H
 
@@ -10,14 +12,14 @@
 class MyDialog : public wxDialog
 {
 public:
-    MyDialog(wxPanel* parent, wxString name, wxString addr, wxString port);
-    ~MyDialog();
-    void SendText(wxCommandEvent& event);
+    MyDialog(wxPanel* parent, wxString name, wxString addr, wxString port); //конструктор
+    ~MyDialog(); //деструктор
+    void SendText(wxCommandEvent& event); //отправка текста
     wxString GetName();
     wxString GetAddr();
     wxString GetPort();
-    wxTextCtrl* m_text1;
-    wxTextCtrl* m_text2;
+    wxTextCtrl* m_text1; //текстовое поле переписки
+    wxTextCtrl* m_text2; //поле ввода текста для отправки
 
 private:
     wxButton* m_send;

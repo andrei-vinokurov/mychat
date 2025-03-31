@@ -85,6 +85,7 @@ void MyFrame::OnAbout(wxCommandEvent& event)
 }
 
 
+//функция отслеживает новые подключения
 void MyFrame::OnServerEvent(wxSocketEvent& event)
 {
 
@@ -137,20 +138,12 @@ void MyFrame::OnServerEvent(wxSocketEvent& event)
 }
 
 
+//функция отслеживает новые сообщения и потерю соединения
 void MyFrame::OnSocketEvent(wxSocketEvent& event)
 {
   wxSocketBase* sock = event.GetSocket();
   IPaddress addr;
   sock->GetPeer(addr);
-  //sock->SetTimeout(10);
-/*
-  switch(event.GetSocketEvent())
-  {
-    case wxSOCKET_INPUT : wxLogMessage(wxT("Присоединение клиента")); break;
-    case wxSOCKET_LOST  : wxLogMessage(wxT("Отключение клиента")); break;
-    default             : wxLogMessage(wxT("Неизвестное событие")); break;
-  }
-*/
 
   switch(event.GetSocketEvent())
   {
@@ -204,21 +197,6 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
 
             default: break;
           }
-
-    
-
-  ////////////////////////////////////
-      /*
-        if(sock->Error())
-        {
-          wxLogMessage("Error1");
-          err = 0xAB;
-          goto label;
-        }
-      */
-  ///////////////////////////////////
-        
-  //      wxLogMessage("|| %s | %s | %s", wS1, wS2, wS3); //для проверки
 
         wxString wSfind = wS1 + wS2;
         if(m_mapClients.find(wSfind) != m_mapClients.end())
@@ -292,8 +270,6 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
             
             else
             {
-              //wxLogMessage("send to || %s | %s | %s", wS1, wS2, wS3); //для проверки
-              
               unsigned char v;
               cl->GetSock()->Read(&v, 1);
               
@@ -305,6 +281,7 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
                 goto label;
               }
               ///////////////////////////
+
               else if(v == 0xAB)
               {
                 err = v;
@@ -332,8 +309,6 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
             sock->Write(&len2, 1);
             sock->Write(c2, len2);
         }
-
-        
       }
 
       label:
@@ -343,7 +318,6 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
         break;
 
     }
-
 
     case wxSOCKET_LOST:
     {
@@ -366,6 +340,7 @@ void MyFrame::OnSocketEvent(wxSocketEvent& event)
 }
 
 
+//обновить список клиентов
 void MyFrame::UpdateList()
 {
   m_listCtrl->DeleteAllItems();
@@ -379,6 +354,8 @@ void MyFrame::UpdateList()
   SendList();
 }
 
+
+//отправить клиентам список клиентов
 void MyFrame::SendList()
 {
     unsigned char c = 0xBE;
